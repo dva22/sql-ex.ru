@@ -14,7 +14,18 @@ Printer(code, model, color, type, price)
 тип принтера - type (лазерный – 'Laser', струйный – 'Jet' или матричный – 'Matrix') и цена - price.
 ***/
 
-/***Задание: 25 (Serge I: 2003-02-14)
+/***
+Задание: 14 (Serge I: 2012-04-20)
+Найти производителей, которые выпускают более одной модели, при этом все выпускаемые производителем модели являются продуктами одного типа.
+Вывести: maker, type
+
+SELECT p.maker, max(p.type )
+FROM Product p
+GROUP BY p.maker
+HAVING COUNT(DISTINCT p.type) = 1 and COUNT(DISTINCT p.model)>1
+
+
+Задание: 25 (Serge I: 2003-02-14)
 Найдите производителей принтеров, которые производят ПК с наименьшим объемом RAM и с самым быстрым процессором среди всех ПК, имеющих наименьший объем RAM. Вывести: Maker
 SELECT DISTINCT maker
 FROM Product p,
