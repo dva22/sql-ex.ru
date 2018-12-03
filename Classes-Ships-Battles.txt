@@ -18,4 +18,16 @@ union
 select  country, class, bore, ship from classes t1 , outcomes t2  WHERE t1.class=t2.ship  ) a 
  group by country
 
+Задание: 47 (Serge I: 2011-02-11)
+Пронумеровать строки из таблицы Product в следующем порядке: имя производителя в порядке убывания числа производимых им моделей (при одинаковом числе моделей имя производителя в алфавитном порядке по возрастанию), номер модели (по возрастанию).
+Вывод: номер в соответствии с заданным порядком, имя производителя (maker), модель (model) 
+
+SELECT ROW_NUMBER() OVER(ORDER BY models.model desc, p.maker, p.model) no,p.maker, p.model
+FROM (SELECT p.maker , count(p.model) model
+      FROM Product p
+      GROUP BY p.maker
+     ) models,
+     Product p
+WHERE p.maker = models.maker
+
 ***/
