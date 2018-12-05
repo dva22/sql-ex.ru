@@ -30,4 +30,26 @@ FROM (SELECT p.maker , count(p.model) model
      Product p
 WHERE p.maker = models.maker
 
+Задание: 51 (Serge I: 2003-02-17)
+Найдите названия кораблей, имеющих наибольшее число орудий среди всех имеющихся кораблей такого же водоизмещения (учесть корабли из таблицы Outcomes).
+WITH dsShips AS
+(SELECT name, class
+ FROM Ships
+ UNION
+ SELECT ship name, ship class
+ FROM Outcomes
+)
+SELECT s.name
+FROM dsShips s, Classes c
+WHERE s.class = c.class and
+      c.numGuns >= ALL(SELECT c1.numGuns
+                       FROM Classes c1
+                       WHERE c1.class in (SELECT dsShips.class 
+                                            FROM dsShips
+                                         ) and
+                             c.displacement = c1.displacement
+                       );
+
+
+
 ***/
