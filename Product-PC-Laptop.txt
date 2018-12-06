@@ -45,4 +45,25 @@ WHERE p.model = PC.model and
                    FROM Product p2
                   WHERE p2.type = 'Printer');
 
+Задание: 65 (Serge I: 2009-08-24)
+Пронумеровать уникальные пары {maker, type} из Product, упорядочив их следующим образом:
+- имя производителя (maker) по возрастанию;
+- тип продукта (type) в порядке PC, Laptop, Printer.
+Если некий производитель выпускает несколько типов продукции, то выводить его имя только в первой строке;
+остальные строки для ЭТОГО производителя должны содержать пустую строку символов (''). 
+WITH dsProd AS
+(SELECT DISTINCT p.maker,
+       p.type,
+       IIF(p.type = 'PC',1, IIF(p.type = 'Laptop',2,3)) sort
+FROM Product p
+),
+dsRes AS
+(SELECT row_number() over(ORDER BY maker, sort) num,
+       row_number() over(partition BY maker ORDER BY maker, sort) numPar,
+       maker,
+       type
+ FROM dsProd
+)
+SELECT num, IIF(numPar = 1,maker,''), type
+FROM dsRes;
 ***/
