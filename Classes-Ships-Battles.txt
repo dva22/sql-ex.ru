@@ -50,6 +50,22 @@ WHERE s.class = c.class and
                              c.displacement = c1.displacement
                        );
 
-
-
+«адание: 70 (Serge I: 2003-02-14)
+”кажите сражени€, в которых участвовало по меньшей мере три корабл€ одной и той же страны.
+WITH dsBattles AS
+(SELECT o.battle, c.country
+ FROM Outcomes o, Ships s, Classes c
+ WHERE o.ship = s.name and
+       c.class = s.class
+ UNION ALL
+ SELECT o.battle, c.country
+ FROM Outcomes o, Classes c
+ WHERE o.ship = c.class and
+      o.ship not in (SELECT name
+                     FROM Ships)
+)
+SELECT DISTINCT battle 
+FROM dsBattles
+GROUP BY battle, country
+HAVING count(*) >= 3
 ***/
