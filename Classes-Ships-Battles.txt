@@ -68,4 +68,22 @@ SELECT DISTINCT battle
 FROM dsBattles
 GROUP BY battle, country
 HAVING count(*) >= 3
+
+«адание: 75 (Serge I: 2009-04-17)
+ƒл€ каждого корабл€ из таблицы Ships указать название первого по времени сражени€ из таблицы Battles,
+в котором корабль мог бы участвовать после спуска на воду. ≈сли год спуска на воду неизвестен, вз€ть последнее по времени сражение.
+≈сли нет сражени€, произошедшего после спуска на воду корабл€, вывести NULL вместо названи€ сражени€.
+—читать, что корабль может участвовать во всех сражени€х, которые произошли в год спуска на воду корабл€.
+¬ывод: им€ корабл€, год спуска на воду, название сражени€
+
+«амечание: считать, что не существует двух битв, произошедших в один и тот же день.
+WITH dsB AS
+(SELECT s.name, s.launched, iif(s.launched is null,max(b.date),min(b.date)) year
+ FROM Ships s left join Battles b
+ on s.launched <= YEAR(b.date) or s.launched is null
+ GROUP BY s.name, s.launched
+)
+SELECT dsB.name, dsB.launched, min(iif(dsB.year=2020,NULL,b.name))
+FROM dsB left join Battles b on b.date = dsB.year
+GROUP BY dsB.name, dsB.launched
 ***/
