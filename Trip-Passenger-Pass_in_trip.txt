@@ -37,28 +37,5 @@ FROM dsPsg, Passenger p, dsTime
 WHERE p.ID_psg = dsPsg.id and
       dsTime.id = p.ID_psg
 
-Задание: 77 (Serge I: 2003-04-09)
-Определить дни, когда было выполнено максимальное число рейсов из
-Ростова ('Rostov'). Вывод: число рейсов, дата.
-WITH dsT AS
-(SELECT p.trip_no, p.date
-FROM Pass_in_trip p
-GROUP BY  p.trip_no, p.date
-),
-dsS as 
-(SELECT COUNT(dsT.trip_no) max
-FROM Trip t, dsT 
-WHERE t.trip_no = dsT.trip_no and
-      t.town_from = 'Rostov'
-GROUP BY  dsT.date
-)
-SELECT COUNT(dsT.trip_no), dsT.date
-FROM Trip t, dsT 
-WHERE t.trip_no = dsT.trip_no and
-      t.town_from = 'Rostov'
-GROUP BY  dsT.date
-HAVING COUNT(dsT.trip_no) =(SELECT max(dsS.max)
-FROM dsS)
-
 
 ***/
