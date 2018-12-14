@@ -37,5 +37,27 @@ FROM dsPsg, Passenger p, dsTime
 WHERE p.ID_psg = dsPsg.id and
       dsTime.id = p.ID_psg
 
+«адание: 88 (Serge I: 2003-04-29)
+—реди тех, кто пользуетс€ услугами только одной компании, определить имена разных пассажиров, летавших чаще других. 
+¬ывести: им€ пассажира, число полетов и название компании.
+WITH dsPsg AS
+(SELECT p.ID_psg,
+        COUNT(DISTINCT t.ID_comp) countComp,
+        COUNT(*) trip_Qty,
+        max(t.ID_comp) idComp
+ FROM Trip t, Pass_in_trip p
+ WHERE p.trip_no = t.trip_no
+ GROUP BY p.ID_psg
+ HAVING COUNT(DISTINCT t.ID_comp) = 1
+)
+SELECT p.name, dsPsg.trip_Qty, c.name
+FROM dsPsg, Company c, Passenger p
+WHERE dsPsg.ID_psg = p.ID_psg and
+      dsPsg.idComp = c.ID_Comp and
+      dsPsg.trip_Qty = (SELECT max(dsPsg.trip_Qty)
+                        FROM dsPsg
+                       )
+
+
 
 ***/
