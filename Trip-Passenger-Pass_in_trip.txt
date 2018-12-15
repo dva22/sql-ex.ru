@@ -58,6 +58,35 @@ WHERE dsPsg.ID_psg = p.ID_psg and
                         FROM dsPsg
                        )
 
-
-
+«адание: 87 (Serge I: 2003-08-28)
+—чита€, что пункт самого первого вылета пассажира €вл€етс€ местом жительства, найти не москвичей, которые прилетали в ћоскву более одного раза. 
+¬ывод: им€ пассажира, количество полетов в ћоскву
+WITH dsFirst AS
+(SELECT p.ID_psg, min(date + time_out) date
+ FROM Pass_in_trip p, Trip t
+ WHERE t.trip_no = p.trip_no
+ GROUP BY p.ID_psg
+),
+dsFirstM AS
+(SELECT p.ID_psg
+FROM dsFirst, Pass_in_trip p, Trip t
+WHERE dsFirst.date = (p.date + time_out) and 
+      dsFirst.ID_psg = p.ID_psg and 
+      t.trip_no = p.trip_no and
+      t.town_from = 'Moscow'
+),
+dsComeM AS
+(SELECT p.ID_psg, COUNT(*) count
+ FROM Pass_in_trip p, Trip t
+ WHERE t.trip_no = p.trip_no and
+      t.town_to = 'Moscow'
+ GROUP BY p.ID_psg
+ HAVING COUNT(*) > 1
+)
+SELECT p.name, dsComeM.count
+FROM dsComeM, Passenger p
+WHERE p.ID_psg = dsComeM.ID_psg and
+      dsComeM.ID_psg not in (SELECT dsFirstM.ID_psg
+                             FROM dsFirstM 
+                            )
 ***/
