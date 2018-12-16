@@ -89,4 +89,54 @@ WHERE p.ID_psg = dsComeM.ID_psg and
       dsComeM.ID_psg not in (SELECT dsFirstM.ID_psg
                              FROM dsFirstM 
                             )
+«адание: 94 (Serge I: 2003-04-09)
+ƒл€ семи последовательных дней, начина€ от минимальной даты, когда из –остова было совершено максимальное число рейсов, определить число рейсов из –остова. 
+¬ывод: дата, количество рейсов
+WITH dsMax AS 
+(SELECT p.date
+ FROM Trip t, Pass_in_trip p 
+ WHERE t.trip_no = p.trip_no and
+       t.town_from = 'Rostov'
+ GROUP BY p.date
+HAVING count(DISTINCT p.trip_no) = (SELECT TOP 1 count(DISTINCT p.trip_no)
+                                      FROM Trip t, Pass_in_trip p 
+                                      WHERE t.trip_no = p.trip_no and
+                                            t.town_from = 'Rostov'
+                                      GROUP BY p.date
+                                     ORDER BY count(DISTINCT p.trip_no) DESC
+                                     )
+),
+dsDates AS 
+(SELECT DATEADD(day, 0, (SELECT min(date)
+                         FROM dsMax)) date1
+ UNION
+ SELECT DATEADD(day, 1, (SELECT min(date)
+                         FROM dsMax)) 
+ UNION
+ SELECT DATEADD(day, 2, (SELECT min(date)
+                         FROM dsMax)) 
+ UNION
+ SELECT DATEADD(day, 3, (SELECT min(date)
+                         FROM dsMax)) 
+ UNION
+ SELECT DATEADD(day, 4, (SELECT min(date)
+                         FROM dsMax))
+ UNION
+ SELECT DATEADD(day, 5, (SELECT min(date)
+                         FROM dsMax))
+ UNION
+ SELECT DATEADD(day, 6, (SELECT min(date)
+                         FROM dsMax))
+),
+dsRostov AS
+(SELECT p.date , count(DISTINCT p.trip_no) count
+ FROM Pass_in_trip p,
+      Trip t
+ WHERE t.trip_no = p.trip_no and
+       t.town_from = 'Rostov' 
+ group by p.date
+)
+SELECT  dsDates.date1, COALESCE(dsRostov.count, 0)
+FROM dsDates left join dsRostov on dsDates.date1 = dsRostov.date
+
 ***/
