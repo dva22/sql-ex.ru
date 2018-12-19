@@ -81,4 +81,57 @@ FROM CTE
 JOIN CTE C ON (C.number-CTE.number)<6 AND (C.number-CTE.number)> =0
 GROUP BY CTE.number,CTE.code
 HAVING COUNT(CTE.number)=6
+
+Задание: 97 (qwrqwr: 2013-02-15)
+Отобрать из таблицы Laptop те строки, для которых выполняется следующее условие:
+значения из столбцов speed, ram, price, screen возможно расположить таким образом, что каждое последующее значение будет превосходить предыдущее в 2 раза или более.
+Замечание: все известные характеристики ноутбуков больше нуля.
+Вывод: code, speed, ram, price, screen.
+
+WITH dsA AS
+(SELECT l.code id, l.speed a
+FROM Laptop l
+WHERE l.speed  > 0 and
+      l.ram  > 0 and
+      l.price > 0 and
+      l.screen > 0
+UNION
+SELECT l.code, l.ram
+FROM Laptop l
+WHERE l.speed  > 0 and
+      l.ram  > 0 and
+      l.price > 0 and
+      l.screen > 0
+UNION
+SELECT l.code, l.price
+FROM Laptop l
+WHERE l.speed  > 0 and
+      l.ram  > 0 and
+      l.price > 0 and
+      l.screen > 0
+UNION
+SELECT l.code, l.screen
+FROM Laptop l
+WHERE l.speed  > 0 and
+      l.ram  > 0 and
+      l.price > 0 and
+      l.screen > 0
+),
+dsAR AS
+(SELECT id, a, row_number() over(partition BY id ORDER BY a) r
+ FROM dsA
+),
+dsRes AS
+(SELECT dsAR.id
+ FROM dsAR, dsAR dsAR1
+ WHERE dsAR.id = dsAR1.id and
+       dsAR.r + 1 = dsAR1.r and
+       dsAR.a * 2  <= dsAR1.a
+ GROUP BY dsAR.id
+ HAVING COUNT(*) = 3
+)
+SELECT l.code, l.speed, l.ram, l.price, l.screen
+FROM dsRes, Laptop l
+WHERE dsRes.id = l.code
+
 ***/
