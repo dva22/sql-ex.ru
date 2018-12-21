@@ -134,4 +134,61 @@ SELECT l.code, l.speed, l.ram, l.price, l.screen
 FROM dsRes, Laptop l
 WHERE dsRes.id = l.code
 
+Задание: 98 (qwrqwr: 2010-04-26)
+Вывести список ПК, для каждого из которых результат побитовой операции ИЛИ, примененной к двоичным представлениям скорости процессора и объема памяти, содержит последовательность из не менее четырех идущих подряд единичных битов.
+Вывод: код модели, скорость процессора, объем памяти.
+
+WITH TEMP AS 
+(SELECT code, 
+       speed,
+       ram,
+       speed|ram AS ILI,
+       speed|ram*1 AS Working_level,
+       CAST('' AS VARCHAR(max)) AS Bi_ILI FROM PC
+ UNION ALL
+ SELECT TEMP.code,
+       TEMP.speed,
+       TEMP.ram,
+       TEMP.ILI,
+       TEMP.Working_level / 2,
+       CAST(TEMP.Working_level%2 AS VARCHAR(max))+TEMP.Bi_ILI FROM TEMP
+ WHERE TEMP.Working_level> 0 
+)
+SELECT code, speed, ram FROM TEMP
+       WHERE Working_level=0
+       AND Bi_ILI like '%1111%' 
+
+Задание: 101 (qwrqwr: 2013-03-29)
+Таблица Printer сортируется по возрастанию поля code. 
+Упорядоченные строки составляют группы: первая группа начинается с первой строки, каждая строка со значением color='n' начинает новую группу, группы строк не перекрываются.
+Для каждой группы определить: наибольшее значение поля model (max_model), количество уникальных типов принтеров (distinct_types_cou) и среднюю цену (avg_price). 
+Для всех строк таблицы вывести: code, model, color, type, price, max_model, distinct_types_cou, avg_price.
+WITH dsP AS
+(SELECT code,
+        model, 
+        color,
+        type, 
+        price,  
+        count(iif(color = 'n',0,null)) over( ORDER BY code) colorGroup
+ FROM Printer
+)
+SELECT dsP.code,
+       dsP.model, 
+       dsP.color,
+       dsP.type, 
+       dsP.price,
+       dsAVG.max_model,
+       dsAVG.distct_types,
+       dsAVG.avg_price
+FROM dsP,
+     (SELECT max(model) max_model,
+             count(DISTINCT type) distct_types,
+             AVG(price) avg_price,
+             colorGroup
+        FROM dsP
+      GROUP BY colorGroup
+     ) dsAVG
+WHERE dsP.colorGroup = dsAVG.colorGroup
+
+
 ***/
