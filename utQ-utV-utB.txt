@@ -38,4 +38,36 @@ WHERE b.B_Q_ID = q.Q_ID and
                                   )
                   )
 
+«адание: 106 (Baser: 2013-09-06)
+ѕусть v1, v2, v3, v4, ... представл€ет последовательность вещественных чисел - объемов окрасок b_vol, упор€доченных по возрастанию b_datetime, b_q_id, b_v_id. 
+Ќайти преобразованную последовательность P1=v1, P2=v1/v2, P3=v1/v2*v3, P4=v1/v2*v3/v4, ..., где каждый следующий член получаетс€ из предыдущего умножением на vi (при нечетных i) или делением на vi (при четных i). 
+–езультаты представить в виде b_datetime, b_q_id, b_v_id, b_vol, Pi, где Pi - член последовательности, соответствующий номеру записи i. ¬ывести Pi с 8-ю знаками после зап€той.
+WITH dsP AS
+(SELECT b_datetime, 
+        b_q_id, 
+        b_v_id, 
+        B_VOL,
+        ROW_NUMBER() OVER (ORDER BY b_datetime, b_q_id, b_v_id) pow
+ FROM utB
+)
+SELECT b_datetime, 
+       b_q_id, 
+       b_v_id, 
+       B_VOL,
+       cast(exp(sum(log(iif(pow % 2 = 0,1.0/cast(B_VOL as decimal(18,8)  ),B_VOL))) OVER (ORDER BY b_datetime, b_q_id, b_v_id)) as decimal(18,8))
+FROM dsP
+«адание: 116 (Velmont: 2013-11-19)
+—чита€, что кажда€ окраска длитс€ ровно секунду, определить непрерывные интервалы времени с длительностью более 1 секунды из таблицы utB.
+¬ывод: дата первой окраски в интервале, дата последней окраски в интервале.
+WITH cte AS (SELECT B_DATETIME, 
+	DATEADD(ss, -1 * DENSE_RANK() OVER(ORDER BY B_DATETIME), B_DATETIME) AS grp
+	FROM utB
+)
+
+SELECT MIN(B_DATETIME), MAX(B_DATETIME)
+FROM cte
+GROUP BY grp
+HAVING COUNT(DISTINCT B_DATETIME) >  1
+
+
 ***/
