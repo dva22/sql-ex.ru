@@ -139,4 +139,38 @@ dsRostov AS
 SELECT  dsDates.date1, COALESCE(dsRostov.count, 0)
 FROM dsDates left join dsRostov on dsDates.date1 = dsRostov.date
 
+«адание: 120 (mslava: 2004-01-05)
+ƒл€ каждой авиакомпании, самолеты которой перевезли хот€ бы одного пассажира, вычислить с точностью до двух дес€тичных знаков средние величины времени нахождени€ самолетов в воздухе (в минутах). “акже рассчитать указанные характеристики по всем летавшим самолетам (использовать слово 'TOTAL').
+¬ывод: компани€, среднее арифметическое, среднее геометрическое, среднее квадратичное, среднее гармоническое.
+
+ƒл€ справки:
+
+среднее арифметическое = (x1 + x2 + ... + xN)/N 
+
+среднее геометрическое = (x1 * x2 * ... * xN)^(1/N) 
+
+среднее квадратичное = sqrt((x1^2 + x2^2 + ... + xN^2)/N) 
+
+среднее гармоническое = N/(1/x1 + 1/x2 + ... + 1/xN)
+select coalesce(c.name, 'TOTAL'), A_mean, G_mean, Q_mean, H_mean 
+from (
+	select  ID_Comp,
+		convert(numeric(18,2), avg(atime)) A_mean,
+		convert(numeric(18,2), Exp(avg(Log(atime)))) G_mean, 
+		convert(numeric(18,2), sqrt(avg(atime*atime))) Q_mean,
+		convert(numeric(18,2), count(*)/sum(1/atime)) H_mean
+	from (
+		select ID_Comp,  trip_no, iif(atime < 0 , 1440 + atime, atime) as atime
+		from (
+			select company.ID_Comp, trip_no, DATEDIFF(minute, time_out, time_in) * 1.00 as atime
+			from company inner join trip on company.ID_comp = trip.ID_comp) as t1
+		) as t2
+	inner join (
+		select trip_no 
+			from Pass_in_trip 
+			group by trip_no, [date]) pt on t2.trip_no = pt.trip_no
+			group by ID_Comp with cube
+		) as a
+	left join Company c on a.ID_comp = c.ID_comp
+
 ***/

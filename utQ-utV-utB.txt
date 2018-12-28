@@ -69,5 +69,26 @@ FROM cte
 GROUP BY grp
 HAVING COUNT(DISTINCT B_DATETIME) >  1
 
+Задание: 119 ($erges: 2008-04-25)
+Сгруппировать все окраски по дням, месяцам и годам. Идентификатор каждой группы должен иметь вид "yyyy" для года, "yyyy-mm" для месяца и "yyyy-mm-dd" для дня.
+Вывести только те группы, в которых количество различных моментов времени (b_datetime), когда выполнялась окраска, более 10.
+Вывод: идентификатор группы, суммарное количество потраченной краски.
+SELECT FORMAT(B_DATETIME, 'yyyy'),
+       SUM(B_VOL)
+  FROM utB
+ GROUP BY FORMAT(B_DATETIME, 'yyyy')
+HAVING COUNT(DISTINCT B_DATETIME) > 10
+ UNION all
+SELECT FORMAT(B_DATETIME, 'yyyy-MM'),
+       SUM(B_VOL)      
+FROM utB
+GROUP BY FORMAT(B_DATETIME, 'yyyy-MM')
+HAVING COUNT(DISTINCT B_DATETIME) > 10
+     UNION all
+SELECT FORMAT(B_DATETIME, 'yyyy-MM-dd'),
+       SUM(B_VOL)      
+FROM utB
+GROUP BY FORMAT(B_DATETIME, 'yyyy-MM-dd')
+HAVING COUNT(DISTINCT B_DATETIME) > 10
 
 ***/
