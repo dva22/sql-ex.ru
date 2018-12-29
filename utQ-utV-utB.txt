@@ -91,4 +91,13 @@ FROM utB
 GROUP BY FORMAT(B_DATETIME, 'yyyy-MM-dd')
 HAVING COUNT(DISTINCT B_DATETIME) > 10
 
+«адание: 112 (Serge I: 2003-12-24)
+ акое максимальное количество черных квадратов можно было бы окрасить в белый цвет
+оставшейс€ краской
+
+with cte as (
+select ((count(distinct [V_ID]) * 255 - sum([B_VOL]))/ 255) as fv
+from utv left join [dbo].[utB] on [utB].[B_V_ID] = [utV].[V_ID]
+group by [V_COLOR])
+select iif(count(*)=3,min(fv),0) as qty from cte
 ***/
