@@ -100,4 +100,24 @@ select ((count(distinct [V_ID]) * 255 - sum([B_VOL]))/ 255) as fv
 from utv left join [dbo].[utB] on [utB].[B_V_ID] = [utV].[V_ID]
 group by [V_COLOR])
 select iif(count(*)=3,min(fv),0) as qty from cte
+
+Задание: 113 (Serge I: 2003-12-24)
+Сколько каждой краски понадобится, чтобы докрасить все Не белые квадраты до белого цвета.
+Вывод: количество каждой краски в порядке (R,G,B)
+with cte1 as (
+select 
+     iif(v_color = 'R',
+           (select count (*) from utQ) * 255- sum(coalesce([B_VOL],0)),
+           0) as r,
+     iif(v_color = 'G',
+           (select count (*) from utQ) * 255- sum(coalesce([B_VOL],0)),
+           0) as g,
+     iif(v_color = 'B',
+           (select count (*) from utQ) * 255- sum(coalesce([B_VOL],0)),
+           0) as b
+from utv, utB
+where  utb.b_v_ID = utv.v_ID
+group by v_color
+)
+select sum(r), sum(g), sum(b) from cte1
 ***/
