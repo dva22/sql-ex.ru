@@ -173,4 +173,32 @@ from (
 		) as a
 	left join Company c on a.ID_comp = c.ID_comp
 
+Задание: 114 (Serge I: 2003-04-08)
+Определить имена разных пассажиров, которым чаще других доводилось лететь на одном и том же месте. Вывод: имя и количество полетов на одном и том же месте.
+WITH dsPsg AS
+(SELECT 
+     p.ID_psg, 
+     count(*) count,
+     max(count(*)) over () max
+ FROM 
+     Pass_in_trip p, Trip t
+ WHERE 
+     t.trip_no = p.trip_no 
+ GROUP BY 
+     p.place,
+     p.ID_psg
+)
+SELECT
+    p.name,
+    max(dsPsg.count)
+FROM 
+    dsPsg,
+    Passenger p
+WHERE 
+    p.ID_psg = dsPsg.ID_psg and
+    dsPsg.max = dsPsg.count
+GROUP BY 
+    p.ID_psg,
+    p.name
+
 ***/
