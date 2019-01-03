@@ -120,4 +120,22 @@ where  utb.b_v_ID = utv.v_ID
 group by v_color
 )
 select sum(r), sum(g), sum(b) from cte1
+
+«адание: 115 (Baser: 2013-11-01)
+–ассмотрим равнобочные трапеции, в каждую из которых можно вписать касающуюс€ всех сторон окружность.  роме того, кажда€ сторона имеет целочисленную длину из множества значений b_vol. 
+¬ывести результат в 4 колонки: Up, Down, Side, Rad. «десь Up - меньшее основание, Down - большее основание, Side - длины боковых сторон, Rad Ц радиус вписанной окружности (с 2-м€ знаками после зап€той).
+SELECT
+    DISTINCT
+    b1.b_vol,
+    b2.b_vol,
+    b3.b_vol,
+    CAST(SQRT(1.0 * b1.b_vol * b2.b_vol) / 2 AS NUMERIC(8, 2))
+FROM 
+    utB b1,
+    utB b2,
+    utB b3
+WHERE 
+    b1.b_vol < b2.b_vol and
+    b3.b_vol = (1.0 * b1.b_vol + 1.0 * b2.b_vol) / 2
+
 ***/
