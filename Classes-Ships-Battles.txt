@@ -86,4 +86,47 @@ WITH dsB AS
 SELECT dsB.name, dsB.launched, min(iif(dsB.year=2020,NULL,b.name))
 FROM dsB left join Battles b on b.date = dsB.year
 GROUP BY dsB.name, dsB.launched
+
+«адание: 117 (Serge I: 2013-11-29)
+ѕо таблице Classes дл€ каждой страны найти максимальное значение среди трех выражений: 
+numguns*5000, bore*3000, displacement.
+¬ывод в три столбца: 
+- страна; 
+- максимальное значение; 
+- слово `numguns` - если максимум достигаетс€ дл€ numguns*5000, слово `bore` - если максимум достигаетс€ дл€ bore*3000, слово `displacement` - если максимум достигаетс€ дл€ displacement.
+«амечание. ≈сли максимум достигаетс€ дл€ нескольких выражений, выводить каждое из них отдельной строкой.
+WITH dsC AS
+(
+ SELECT
+     country,
+     numguns * 5000 max,
+     'numguns' name
+ FROM
+     Classes  
+
+ UNION ALL
+
+ SELECT
+     country,
+     bore * 3000 max,
+     'bore' name
+ FROM
+     Classes
+
+ UNION ALL
+ 
+ SELECT
+     country,
+     displacement max,
+     'displacement' name
+ FROM
+     Classes 
+)
+SELECT  DISTINCT country, max, name 
+FROM dsC c1
+WHERE max = (SELECT  MAX(max)
+             FROM dsC c2
+             WHERE c2.country = c1.country
+            )
+
 ***/
