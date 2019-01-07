@@ -211,4 +211,48 @@ WITH dsP AS
 SELECT *,
        max(A) OVER (PARTITION BY maker)
 FROM dsP
+
+Задание: 137 (Serge I: 2005-01-19)
+Для каждой пятой модели (в порядке возрастания номеров
+моделей) из таблицы Product
+определить тип продукции и среднюю цену модели.
+WITH 
+dsM AS
+    (SELECT
+         model,
+         price 
+     FROM
+         PC
+
+     UNION ALL
+
+     SELECT
+         model,
+         price 
+     FROM
+         Laptop
+
+     UNION ALL
+
+     SELECT
+         model,
+         price 
+     FROM
+         Printer
+    ),
+dsP AS
+    (SELECT 
+         model, 
+         type,
+         (SELECT AVG(dsM.price) FROM dsM WHERE p.model = dsM.model) price,
+         ROW_NUMBER() OVER (ORDER BY model) nums
+     FROM Product p
+    )
+SELECT
+    type, 
+    price
+FROM 
+    dsP
+WHERE
+    nums % 5 = 0
 ***/

@@ -129,4 +129,39 @@ WHERE max = (SELECT  MAX(max)
              WHERE c2.country = c1.country
             )
 
+Задание: 130 (Velmont: 2015-08-14)
+Историки решили составить отчет о битвах в два суперстолбца. Каждый суперстолбец состоит из трёх столбцов (номер битвы, название и дата). 
+Сначала в порядке возрастания номеров заполняется первый суперстолбец, потом - второй. Порядковый номер битве назначается согласно сортировке: дата, название. 
+С целью экономии бумаги, историки делят информацию из таблицы Battles поровну, занося в первый суперстолбец на одну битву больше при их нечетном количестве.
+В таблицу с шестью колонками вывести результат работы историков, пустые места заполнить NULL-значениями.
+
+WITH 
+dsB AS
+    (SELECT 
+         ROW_NUMBER() OVER (ORDER BY DATE) number1,
+         name,
+         date,
+         NTILE(2) OVER (ORDER BY DATE) group1
+     FROM 
+         Battles b
+    ),
+dsBN AS 
+     (SELECT
+          *,
+          ROW_NUMBER() OVER (PARTITION BY group1 ORDER BY DATE) number2
+      FROM 
+          dsB
+     )
+SELECT 
+    max(iif(group1 = 1, number1, null)),
+    max(iif(group1 = 1, name, null)),
+    max(iif(group1 = 1, date, null)),
+    max(iif(group1 = 2, number1, null)),
+    max(iif(group1 = 2, name, null)),
+    max(iif(group1 = 2, date, null))
+FROM
+    dsBN
+GROUP BY 
+    number2
+
 ***/
