@@ -137,5 +137,73 @@ FROM
 WHERE 
     b1.b_vol < b2.b_vol and
     b3.b_vol = (1.0 * b1.b_vol + 1.0 * b2.b_vol) / 2
+Задание: 134 (Serge I: 2003-12-26)
+Выполняется докраска квадратов до белого цвета каждым цветом по следующей схеме:
+- сначала закрашиваются квадраты, для которых требуется меньше краски соответствующего цвета;
+- при одинаковом необходимом количестве краски сначала закрашиваются квадраты с меньшим q_id.
+Найти идентификаторы НЕ белых квадратов, оставшихся после израсходования всей краски.
+--неоходимо красох по цветам
+WITH
+dsNeed AS
+    (SELECT
+         q.Q_ID,
+         q.col color,
+         255-SUM(COALESCE(b.B_VOL,0)) need,
+         SUM(255-SUM(COALESCE(b.B_VOL,0))) 
+               OVER (PARTITION BY q.col ORDER BY 
+                         255-SUM(COALESCE(b.B_VOL,0)), q.Q_ID
+                    ) sum
+     FROM
+         (SELECT Q_ID, Col 
+          FROM (SELECT
+                    Q_ID
+                FROM 
+                    utQ
+                ) t1
+                CROSS JOIN 
+               (SELECT 'R' Col
+                UNION ALL 
+                SELECT 'G' UNION ALL
+                SELECT 'B'
+               ) t2
+          )  q
+         LEFT JOIN 
+          (SELECT
+               v.V_COLOR,
+               b.B_Q_ID,
+               SUM(b.B_VOL) B_VOL
+           FROM
+              utB b,utV v
+              WHERE v.V_ID = b.B_V_ID  
+            GROUP BY 
+              v.V_COLOR,
+              b.B_Q_ID 
+           ) b
+         ON q.Q_ID = b.B_Q_ID AND b.V_COLOR = q.Col
+     GROUP BY
+         q.Q_ID,
+         q.col
+    ),
+--остатки краски по цветам
+dsHas AS
+    (SELECT
+         v.V_COLOR color,
+         COUNT(DISTINCT v.V_ID)*255 - SUM(COALESCE(b.B_VOL,0)) has
+     FROM
+         utV v
+         LEFT JOIN utB b
+         ON v.V_ID = b.B_V_ID         
+     GROUP BY
+         v.V_COLOR
+     )
+SELECT
+    DISTINCT dsNeed.Q_ID
+FROM 
+    dsNeed,
+    dsHas
+WHERE
+    dsNeed.color = dsHas.color and
+    dsNeed.sum > dsHas.has
+
 
 ***/
