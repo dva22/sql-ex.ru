@@ -255,4 +255,64 @@ FROM
     dsP
 WHERE
     nums % 5 = 0
+
+«адание: 123 (qwrqwr: 2014-11-07)
+ƒл€ каждого производител€ подсчитать: сколько имеетс€ в наличии его продуктов (любого типа) с неуникальной дл€ этого производител€ ценой и количество таких неуникальных цен. 
+¬ывод: производитель, количество продуктов, количество цен.
+WITH 
+dsM1 AS
+    (SELECT
+         model,
+         price
+     FROM
+         PC
+
+     UNION ALL
+
+     SELECT
+         model,
+         price 
+     FROM
+         Laptop
+
+     UNION ALL
+
+     SELECT
+         model,
+         price 
+     FROM
+         Printer
+    ),
+dsP AS
+    (SELECT 
+         p.maker, 
+         dsM1.price,
+         p.model
+     FROM 
+         Product p
+         left join dsM1
+         on dsM1.model = p.model    
+    ),
+dsPrice AS
+(SELECT
+   maker,
+    (SELECT 
+          IIF(COUNT(dsP1.price)-1>0,1,0)
+     FROM dsP dsP1 
+     WHERE dsP1.price = dsP.price and
+           dsP1.maker = dsP.maker
+    ) c,
+    price
+FROM
+    dsP
+)
+SELECT
+    maker,
+    sum(c),
+    COUNT(DISTINCT iif(c>0,price,null))
+FROM
+    dsPrice
+GROUP BY
+    maker
+
 ***/

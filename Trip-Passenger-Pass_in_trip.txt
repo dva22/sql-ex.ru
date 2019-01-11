@@ -233,4 +233,27 @@ FROM
 WHERE
     p.ID_psg = dsPgs.ID_psg
 
+Задание: 142 (Serge I: 2003-08-28)
+Среди пассажиров, летавших на самолетах только одного типа, определить тех, кто прилетал в один и тот же город не менее 2-х раз.
+Вывести имена пассажиров.
+WITH 
+dsPsg AS
+    (SELECT 
+         p.ID_psg
+     FROM 
+         Pass_in_trip p
+         INNER JOIN Trip t
+         ON t.trip_no = p.trip_no 
+     GROUP BY 
+         p.ID_psg
+     HAVING 
+         MAX(t.plane) = MIN(t.plane) AND
+	 COUNT(town_to) >  COUNT(DISTINCT town_to) 
+)
+SELECT
+    p.name
+FROM 
+    Passenger p
+WHERE    
+    p.ID_psg IN (SELECT dsPsg.ID_psg FROM dsPsg)
 ***/
