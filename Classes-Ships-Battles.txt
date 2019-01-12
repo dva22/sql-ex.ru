@@ -164,4 +164,38 @@ FROM
 GROUP BY 
     number2
 
+«адание: 139 (Serge I: 2017-05-12)
+ƒл€ каждого корабл€, отсутствующего в таблице Outcomes, перечислить через зап€тую в хронологическом пор€дке сражени€, 
+в которых этот корабль не смог бы прин€ть участие. ≈сли таких сражений нет, вывести NULL.
+«амечание. —читать, что корабль может принимать участие в сражени€х, произошедших в год спуска корабл€ на воду.
+¬ывод: им€ корабл€, список сражений
+with a as(select ship name, datepart(year,date) launched from Outcomes join Battles on battle=name),
+Ships1 AS
+(select name, launched from Ships where launched is not null 
+ union
+ select name,(select min(s1.launched) from Ships s1 where 
+ s.name=s1.class) from Ships s  where launched is null 
+union
+ select name,(select min(s1.launched) from a s1 where 
+ s.name=s1.name) from Ships s  where launched is null 
+),
+dsB AS
+(SELECT 
+    s.name,
+    s.launched,
+    iif(s.launched is null,MIN(b.date),MAX(b.date)) year
+ FROM Ships1 s left join Battles b
+ on s.launched > YEAR(b.date) or s.launched is null
+WHERE 
+    s.name not in (SELECT ship FROM Outcomes)
+ GROUP BY s.name, s.launched
+-- ORDER BY s.name
+)
+SELECT 
+     dsB.name, 
+    -- dsB.launched, 
+     STRING_AGG(b.name,',') WITHIN GROUP (ORDER BY b.date)
+FROM dsB left join Battles b on b.date <= dsB.year
+GROUP BY dsB.name
+
 ***/

@@ -315,4 +315,55 @@ FROM
 GROUP BY
     maker
 
+«адание: 125 (Baser: 2014-10-24)
+ƒанные о продаваемых модел€х и ценах (из таблиц Laptop, PC и Printer) объединить в одну таблицу LPP и создать в ней пор€дковую нумерацию (id) без пропусков и дубликатов. 
+—читать, что модели внутри каждой из трЄх таблиц упор€дочены по возрастанию пол€ code. ≈диную нумерацию записей LPP сделать по следующему правилу: сначала идут первые модели из таблиц (Laptop, PC и Printer), потом последние модели, далее - вторые модели из таблиц, предпоследние и т.д. 
+ѕри исчерпании моделей определенного типа, нумеровать только оставшиес€ модели других типов. 
+¬ывести: id, type, model и price. “ип модели type €вл€етс€ строкой 'Laptop', 'PC' или 'Printer'.
+WITH dsP AS
+(SELECT
+    code,
+    'Laptop' type,
+    model,
+    price,
+    IIF(code<=(SELECT COUNT(*) FROM Laptop)/2,
+        ROW_NUMBER() OVER (ORDER BY code)*2-1,
+        ROW_NUMBER() OVER (ORDER BY code DESC)*2
+       ) num 
+FROM 
+    Laptop
+UNION 
+SELECT
+    code,
+    'PC' type,
+    model,
+    price,
+    IIF(code<=(SELECT COUNT(*) FROM PC)/2,
+        ROW_NUMBER() OVER (ORDER BY code)*2-1,
+        ROW_NUMBER() OVER (ORDER BY code DESC)*2
+       ) num
+FROM 
+    PC
+UNION 
+SELECT
+    code,
+    'Printer' type,
+    model,
+    price,
+    IIF(code<=(SELECT COUNT(*) FROM Printer)/2,
+        ROW_NUMBER() OVER (ORDER BY code)*2-1,
+        ROW_NUMBER() OVER (ORDER BY code DESC)*2
+       ) num
+FROM 
+    Printer
+)
+SELECT
+    ROW_NUMBER() OVER(ORDER BY num, type),
+    type,
+    model,
+    price
+FROM 
+    dsP
+
+
 ***/
