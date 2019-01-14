@@ -365,5 +365,96 @@ SELECT
 FROM 
     dsP
 
+Задание: 127 (qwrqwr: 2015-04-24)
+Найти округленное до сотых долей среднее арифметическое следующих цен:
+1. Цена самых дешевых Laptop-ов от производителей РС с самой низкой скоростью CD;
+2. Цена самых дорогих РС от производителей самых дешевых принтеров;
+3. Цена самых дорогих принтеров от производителей Laptop-ов с наибольшим объемом памяти.
+Замечание: При расчёте среднего отсутствующие цены не учитывать.
+WITH 
+dsPCD AS
+    (SELECT
+         p.maker
+     FROM 
+         PC,
+         Product p
+     WHERE
+         p.model = PC.model and
+         cast(replace(cd,'x','')as numeric) = (SELECT MIN(cast(replace(cd,'x','') as numeric)) FROM PC)
+    ),
+dsL AS
+    (SELECT
+         TOP 1  l.price 
+     FROM 
+         Laptop l,
+         Product p
+     WHERE
+         p.model = l.model and
+         p.maker in (SELECT maker FROM dsPCD) and
+         l.price > 0
+     ORDER BY l.price
+    ),
+dsPPr AS
+    (SELECT
+         p.maker
+     FROM 
+         Printer pr,
+         Product p
+     WHERE
+         p.model = pr.model and
+         pr.price = (SELECT MIN(price) FROM Printer)
+    ),
+dsPC AS
+    (SELECT
+         TOP 1  PC.price 
+     FROM 
+         PC,
+         Product p
+     WHERE
+         p.model = PC.model and
+         p.maker in (SELECT maker FROM dsPPr) and
+         PC.price > 0
+     ORDER BY PC.price DESC
+    ),
+dsPL AS
+    (SELECT
+         p.maker
+     FROM 
+         Laptop l,
+         Product p
+     WHERE
+         p.model = l.model and
+         l.ram = (SELECT MAX(RAM) FROM lAPTOP)
+    ),
+dsPr AS
+    (SELECT
+         TOP 1 pr.price 
+     FROM 
+         Printer pr,
+         Product p
+     WHERE
+         p.model = pr.model and
+         p.maker in (SELECT maker FROM dsPL) and
+         pr.price > 0
+     ORDER BY pr.price DESC
+    )
+SELECT
+    cast(AVG(price) as NUMERIC(10,2))
+FROM
+    (SELECT
+         price
+     FROM 
+         dsL
+     UNION ALL
+     SELECT
+         price
+     FROM 
+         dsPC
+     UNION ALL
+     SELECT
+         price
+     FROM 
+         dsPr
+     ) dsPrices
 
 ***/
