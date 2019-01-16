@@ -256,4 +256,56 @@ FROM
     Passenger p
 WHERE    
     p.ID_psg IN (SELECT dsPsg.ID_psg FROM dsPsg)
+«адание: 133 (yuriy.rozhok: 2007-03-24)
+ѕусть имеетс€ некоторое подмножество S множества целых чисел. Ќазовем "горкой с вершиной N" последовательность чисел из S, в которой числа, меньшие N, выстроены (слева направо без разделителей) сначала возрастающей цепочкой, а потом Ц убывающей цепочкой, и значением N между ними.
+Ќапример , дл€ S = {1, 2, Е, 10} горка с вершиной 5 представл€етс€ такой последовательностью: 123454321. ѕри S, состо€щем из идентификаторов всех компаний, дл€ каждой компании построить "горку", рассматрива€ ее идентификатор в качестве вершины.
+—читать идентификаторы положительными числами и учесть, что в базе нет данных, при которых количество цифр в "горке" может превысить 70.
+¬ывод: id_comp, "горка"
+WITH 
+dsN AS
+   (
+    SELECT c.ID_comp N
+    FROM Company c      
+   ),
+dsUp AS 
+   (
+    SELECT
+        ISNULL(STRING_AGG(dsN.n,'') 
+               WITHIN GROUP (ORDER BY dsN.n),
+               ''
+               ) up,
+        c.ID_comp id
+    FROM
+        Company c
+        LEFT JOIN dsN
+        ON c.ID_comp > dsN.N
+    GROUP BY 
+        c.ID_comp
+    ),
+dsDown AS 
+   (
+    SELECT
+        ISNULL(STRING_AGG(dsN.n,'') 
+               WITHIN GROUP (ORDER BY dsN.n DESC),
+               ''
+               ) down, 
+        c.ID_comp id
+    FROM
+        Company c
+        LEFT JOIN dsN
+        ON c.ID_comp > dsN.N
+    GROUP BY 
+        c.ID_comp
+    )
+SELECT
+    dsUp.id,
+    dsUp.up + 
+    CAST(dsUp.id as VARCHAR(MAX)) +
+    dsDown.down
+FROM 
+    dsUp,
+    dsDown
+WHERE
+    dsUp.id = dsDown.id
+
 ***/

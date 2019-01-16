@@ -169,33 +169,28 @@ GROUP BY
 в которых этот корабль не смог бы прин€ть участие. ≈сли таких сражений нет, вывести NULL.
 «амечание. —читать, что корабль может принимать участие в сражени€х, произошедших в год спуска корабл€ на воду.
 ¬ывод: им€ корабл€, список сражений
-with a as(select ship name, datepart(year,date) launched from Outcomes join Battles on battle=name),
-Ships1 AS
-(select name, launched from Ships where launched is not null 
- union
- select name,(select min(s1.launched) from Ships s1 where 
- s.name=s1.class) from Ships s  where launched is null 
-union
- select name,(select min(s1.launched) from a s1 where 
- s.name=s1.name) from Ships s  where launched is null 
-),
-dsB AS
-(SELECT 
-    s.name,
-    s.launched,
-    iif(s.launched is null,MIN(b.date),MAX(b.date)) year
- FROM Ships1 s left join Battles b
- on s.launched > YEAR(b.date) or s.launched is null
-WHERE 
-    s.name not in (SELECT ship FROM Outcomes)
- GROUP BY s.name, s.launched
--- ORDER BY s.name
+WITH
+dsShips AS
+   (SELECT name, 
+           IIF(launched IS NULL,
+               (SELECT MIN(s_in.launched) 
+                FROM Ships s_in 
+                WHERE s.class = s_in.name and 
+                      s_in.launched IS NOT NULL
+                ),
+                launched
+               ) launched_ship
+     FROM Ships s  
 )
 SELECT 
-     dsB.name, 
-    -- dsB.launched, 
-     STRING_AGG(b.name,',') WITHIN GROUP (ORDER BY b.date)
-FROM dsB left join Battles b on b.date <= dsB.year
-GROUP BY dsB.name
+     dsShips.name, 
+     STRING_AGG(b.name,',') WITHIN GROUP (ORDER BY b.date)       
+FROM 
+     dsShips 
+     LEFT JOIN Battles b 
+     ON YEAR(b.date) < dsShips.launched_ship 
+WHERE 
+    dsShips.name NOT IN (SELECT ship FROM Outcomes)
+GROUP BY dsShips.name
 
 ***/
