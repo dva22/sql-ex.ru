@@ -457,4 +457,36 @@ FROM
          dsPr
      ) dsPrices
 
+Задание: 144 (Serge I: 2019-01-04)
+Найти производителей, которые производят PC как с самой низкой ценой, так и с самой высокой.
+Вывод: maker
+WITH 
+dsMakersMaxPrice AS
+   (SELECT
+        p.maker        
+    FROM 
+        PC,
+        Product p
+    WHERE 
+        price in (SELECT MAX(price) FROM PC) AND
+        p.model = PC.model
+   ),
+dsMakersMinPrice AS
+   (SELECT
+        p.maker        
+    FROM 
+        PC,
+        Product p
+    WHERE 
+        price in (SELECT MIN(price) FROM PC) AND
+        p.model = PC.model
+   )
+SELECT
+    DISTINCT p.maker
+FROM 
+    Product p
+WHERE 
+    p.maker in (SELECT maker FROM dsMakersMinPrice) and
+    p.maker in (SELECT maker FROM dsMakersMaxPrice)
+
 ***/
