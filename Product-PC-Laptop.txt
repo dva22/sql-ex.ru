@@ -489,4 +489,35 @@ WHERE
     p.maker in (SELECT maker FROM dsMakersMinPrice) and
     p.maker in (SELECT maker FROM dsMakersMaxPrice)
 
+DML
+Задание: 10 (Serge I: 2004-09-09)
+Добавить в таблицу PC те модели ПК из Product, которые отсутствуют в таблице PC.
+
+При этом модели должны иметь следующие характеристики:
+
+1. Код равен номеру модели плюс максимальный код, который был до вставки.
+
+2. Скорость, объем памяти и диска, а также скорость CD должны иметь максимальные характеристики среди всех имеющихся в таблице PC.
+
+3. Цена должна быть средней среди всех ПК, имевшихся в таблице PC до вставки.
+INSERT INTO PC
+SELECT
+    model + (SELECT MAX(code) FROM PC) code,
+    model,
+    (SELECT MAX(speed) FROM PC) speed,
+    (SELECT MAX(ram) FROM PC) ram,
+    (SELECT MAX(hd) FROM PC) hd,
+    CAST((SELECT MAX(cast(replace(cd,'x','') as numeric)) 
+          FROM PC
+         ) 
+         AS VARCHAR(2)
+        )+ 'x' cd,
+    (SELECT AVG(price) FROM PC) price
+FROM 
+    Product
+WHERE 
+    model not in (SELECT model FROM PC) AND
+    type = 'PC'
+
+
 ***/
