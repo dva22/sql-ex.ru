@@ -193,4 +193,26 @@ WHERE
     dsShips.name NOT IN (SELECT ship FROM Outcomes)
 GROUP BY dsShips.name
 
+dmlЗадание: 14 (Serge I: 2004-09-09)
+Удалите классы, имеющие в базе данных менее трех кораблей (учесть корабли из Outcomes).
+WITH 
+dsShips AS
+   (SELECT s.class, s.name
+    FROM Ships s
+    
+    UNION 
+
+    SELECT o.ship, o.ship
+    FROM Outcomes o
+   )
+DELETE 
+FROM 
+    Classes
+WHERE 
+    class not in (SELECT class 
+                  FROM dsShips
+                  GROUP BY class
+                  HAVING count(DISTINCT name) >= 3
+                 )
+
 ***/
