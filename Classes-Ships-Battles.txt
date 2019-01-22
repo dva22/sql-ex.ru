@@ -214,5 +214,29 @@ WHERE
                   GROUP BY class
                   HAVING count(DISTINCT name) >= 3
                  )
-
+reiting
+SELECT
+    ship, 
+    LEFT(ship,CHARINDEX(' ', ship))+
+    REPLACE(SPACE(DATALENGTH(ship)-
+          CHARINDEX(' ', ship)-
+          CHARINDEX(' ', REVERSE(ship))
+          ),' ','*')+
+    RIGHT(ship,CHARINDEX(' ', REVERSE(ship)))
+FROM 
+    Outcomes
+WHERE
+    CHARINDEX(' ', SUBSTRING(ship,CHARINDEX(' ', ship)+1,1000)) > 0
+SELECT
+    ship, 
+    LEFT(ship,CHARINDEX(' ', ship))+
+    REPLACE(SPACE(DATALENGTH(ship)-
+          CHARINDEX(' ', ship)-
+          CHARINDEX(' ', REVERSE(ship))
+          ),' ','*')+
+    RIGHT(ship,CHARINDEX(' ', REVERSE(ship)))
+FROM 
+    Outcomes
+WHERE
+    CHARINDEX(' ', SUBSTRING(ship,CHARINDEX(' ', ship)+1,1000)) > 0
 ***/
