@@ -519,5 +519,19 @@ WHERE
     model not in (SELECT model FROM PC) AND
     type = 'PC'
 
+Задание: 4 (Serge I: 2009-04-17) 
+Посчитать сумму цифр в номере каждой модели из таблицы Product
+Вывод: номер модели, сумма цифр
+select model,
+(datalength(model)-datalength(REPLACE(model, '1', '')))*1 +
+(datalength(model)-datalength(REPLACE(model, '2', '')))*2 +
+(datalength(model)-datalength(REPLACE(model, '3', '')))*3 +
+(datalength(model)-datalength(REPLACE(model, '4', '')))*4 +
+(datalength(model)-datalength(REPLACE(model, '5', '')))*5 +
+(datalength(model)-datalength(REPLACE(model, '6', '')))*6 +
+(datalength(model)-datalength(REPLACE(model, '7', '')))*7 +
+(datalength(model)-datalength(REPLACE(model, '8', '')))*8 +
+(datalength(model)-datalength(REPLACE(model, '9', '')))*9
+from product
 
 ***/
