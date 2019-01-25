@@ -519,6 +519,7 @@ WHERE
     model not in (SELECT model FROM PC) AND
     type = 'PC'
 
+
 Задание: 4 (Serge I: 2009-04-17) 
 Посчитать сумму цифр в номере каждой модели из таблицы Product
 Вывод: номер модели, сумма цифр
