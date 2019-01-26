@@ -308,4 +308,52 @@ FROM
 WHERE
     dsUp.id = dsDown.id
 
+Задание: 6 (pаparome: 2005-12-02) 
+Предполагая, что не существует номера рейса большего 65535,
+вывести номер рейса и его представление в двоичной системе счисления (без ведущих нулей)
+with dsN as
+(
+SELECT
+   trip_no,
+   LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2*2) as bit)))
++LTRIM(STR(cast(trip_no&(2) as bit)))
++LTRIM(STR(cast(trip_no&1 as bit))) n
+
+FROM
+   Trip
+)
+SELECT
+    trip_no,
+    SUBSTRING(n, CHARINDEX('1', n),255)
+FROM
+   dsN
+
 ***/
