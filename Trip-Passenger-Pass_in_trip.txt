@@ -356,4 +356,24 @@ SELECT
 FROM
    dsN
 
+
+«адание: 8 (Serge I: 2003-04-08) 
+ќпределить имена разных пассажиров, летевших на одном и том же месте хот€ бы два раза подр€д.
+
+WITH dsPsg AS
+(SELECT pt.Id_psg id, pt.place, LAG(pt.place) OVER(partition by pt.id_psg ORDER BY pt.Id_psg, pt.date + t.time_out) lp
+FROM Pass_in_trip pt, Trip t
+WHERE t.trip_no = pt.trip_no 
+)
+SELECT
+    MAX(p.name)
+FROM 
+    dsPsg, 
+    Passenger p
+WHERE 
+    p.Id_psg = dsPsg.id and
+    dsPsg.place = dsPsg.lp
+GROUP BY
+    p.Id_psg
+
 ***/

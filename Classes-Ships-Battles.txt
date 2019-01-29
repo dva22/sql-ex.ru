@@ -239,4 +239,29 @@ FROM
     Outcomes
 WHERE
     CHARINDEX(' ', SUBSTRING(ship,CHARINDEX(' ', ship)+1,1000)) > 0
+
+Задание: 7 (qwrqwr: 2013-05-03) 
+Для каждого месяца (с учетом года) из таблицы Battles посчитать сколько раз повторяется каждый день недели в этом месяце.
+Вывод: месяц (в формате "YYYY-ММ"), количество понедельников, вторников, ...воскресений.
+SELECT
+    FORMAT(date, 'yyyy-MM'),
+    DATEDIFF(WEEK, DATEADD(DAY,-(1+1)%7, FORMAT(date, 'yyyy-MM')+'-01'),
+    DATEADD(DAY,-(1+1)%7, DATEADD(MONTH,1, FORMAT(date, 'yyyy-MM')+'-01')))
+    ,DATEDIFF(WEEK, DATEADD(DAY,-(2+1)%7, FORMAT(date, 'yyyy-MM')+'-01'),
+    DATEADD(DAY,-(2+1)%7, DATEADD(MONTH,1, FORMAT(date, 'yyyy-MM')+'-01')))
+    ,DATEDIFF(WEEK, DATEADD(DAY,-(3+1)%7, FORMAT(date, 'yyyy-MM')+'-01'),
+    DATEADD(DAY,-(3+1)%7, DATEADD(MONTH,1, FORMAT(date, 'yyyy-MM')+'-01')))
+    ,DATEDIFF(WEEK, DATEADD(DAY,-(4+1)%7, FORMAT(date, 'yyyy-MM')+'-01'),
+    DATEADD(DAY,-(4+1)%7, DATEADD(MONTH,1, FORMAT(date, 'yyyy-MM')+'-01')))
+    ,DATEDIFF(WEEK, DATEADD(DAY,-(5+1)%7, FORMAT(date, 'yyyy-MM')+'-01'),
+    DATEADD(DAY,-(5+1)%7, DATEADD(MONTH,1, FORMAT(date, 'yyyy-MM')+'-01')))
+    ,DATEDIFF(WEEK, DATEADD(DAY,-(6+1)%7, FORMAT(date, 'yyyy-MM')+'-01'),
+    DATEADD(DAY,-(6+1)%7, DATEADD(MONTH,1, FORMAT(date, 'yyyy-MM')+'-01')))
+    ,DATEDIFF(WEEK, DATEADD(DAY,-(7+1)%7, FORMAT(date, 'yyyy-MM')+'-01'),
+    DATEADD(DAY,-(7+1)%7, DATEADD(MONTH,1, FORMAT(date, 'yyyy-MM')+'-01')))
+FROM
+    Battles
+GROUP BY 
+    FORMAT(date, 'yyyy-MM')
+
 ***/
