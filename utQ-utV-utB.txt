@@ -205,5 +205,45 @@ WHERE
     dsNeed.color = dsHas.color and
     dsNeed.sum > dsHas.has
 
+Задание: -1 (Serge I: 2004-06-22) 
+Методом наименьших квадратов найти линейную зависимость мгновенного расхода краски от времени: 
+V = at + b, 
+где V - расход краски; t - время в секундах, отсчитываемое от первой окраски (t = 0). 
+Вывод: a с 8-ю знаками после десятичной точки; b - с 2-мя знаками после десятичной точки. 
+WITH
+dsD AS
+(SELECT B_DATETIME,
+    iif(DATEDIFF(second,(select min(B_DATETIME) from utB),B_DATETIME)>0,cast(DATEDIFF(second,(select min(B_DATETIME) from utB),B_DATETIME) as decimal(10,0))-81600,0) sec,
+    B_VOL vol
+ FROM
+    utB
+),
+dsP AS
+(SELECT
+   SUM(sec * sec) stt,
+   SUM(vol * sec)  syt,
+   SUM(sec) st,
+   SUM(vol)  sy,
+   COUNT(*)  N
+ FROM
+    dsD 
+),
+d as
+(
+SELECT (syt * N -sy*st) a ,(N*stt -st*st) b,
+ (stt*sy -syt*st) c,(N*stt -st*st) d
+FROM
+    dsP
+)
+/*SELECT
+   cast(B_DATETIME as int)
+ FROM
+    dsD*/
+
+
+select
+cast(cast(CONVERT(decimal(30,0), a)  /CONVERT(decimal(30,0),b) as decimal(26,8))as decimal(26,8)) ,
+cast(cast(CONVERT(decimal(25,0), c)  /CONVERT(decimal(19,0),b) as decimal(26,1))as decimal(26,2))  from d
+
 
 ***/
