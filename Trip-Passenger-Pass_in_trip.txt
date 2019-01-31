@@ -16,6 +16,7 @@ Pass_in_trip(trip_no, date, ID_psg, place)
 «адание: 76 (Serge I: 2003-08-28)
 ќпределить врем€, проведенное в полетах, дл€ пассажиров, летавших всегда на разных местах. ¬ывод: им€ пассажира, врем€ в минутах.
 
+
 WITH dsPsg AS
 (SELECT pt.Id_psg id
 FROM Pass_in_trip pt, Trip t
