@@ -252,34 +252,18 @@ cast(cast(CONVERT(decimal(25,0), c)  /CONVERT(decimal(19,0),b) as decimal(26,1))
 В таблице utB, отсортированной по b_q_id, b_v_id, b_datetime, определить количество (N) подряд идущих одинаковых значений b_vol от 
 конца списка. Вывести N, b_vol.
 WITH
-dsV AS
-(SELECT 
-      row_number() over ( order by b_q_id, b_v_id, b_datetime) n,
-      coalesce(LAG(b_vol) OVER(order by b_q_id, b_v_id, b_datetime),-1) l,
-      b_vol v    
- FROM 
-     utB
-/*select 1 n,-1 l, 50 v
-union all
-select 2,50, 0 
-union all
-select 3,0, 50 
-union all
-select 4,50, 60 
-union all
-select 5,60, 60 */
-),
-dsv1 as
-(
-SELECT
-   v1.*
+   dsV AS
+   (SELECT 
+        row_number() over ( order by b_q_id, b_v_id, b_datetime) n,
+        coalesce(LAG(b_vol) OVER(order by b_q_id, b_v_id, b_datetime),-1) lag,
+        b_vol vol    
+    FROM 
+        utB
+   )
+SELECT 
+   count(*),
+   max(vol)
 FROM
-   dsV v1
-WHERE n<=(SELECT max(n) FROM dsV where v = l)
-)
-select 
-count(*),
-max(v)
-from 
-dsv1 v1
-WHERE n >= (SELECT max(n) FROM dsV1 where v <> l)
+   dsV v
+WHERE 
+   n >= (SELECT max(n) FROM dsV where vol <> lag)
