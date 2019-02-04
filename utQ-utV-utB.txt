@@ -267,3 +267,28 @@ FROM
    dsV v
 WHERE 
    n >= (SELECT max(n) FROM dsV where vol <> lag)
+
+«адание: 11 (ZrenBy: 2003-09-01) 
+¬ыбрать все белые квадраты, каждый из которых окрашивалс€ только баллончиками, использовавшимис€ дл€ этого (одного) квадрата. ¬ывести им€ квадрата
+WITH
+dsV AS
+(
+SELECT
+    b.B_V_ID id
+FROM
+    utB b
+GROUP BY 
+    b.B_V_ID
+HAVING (COUNT(DISTINCT b.B_Q_ID)) = 1
+)
+SELECT
+    max(q.q_name)
+FROM
+    utQ q,
+    utB b
+WHERE
+    q.q_id = b.B_Q_ID AND
+    b.B_V_ID in (SELECT id FROM dsV)
+GROUP BY 
+    q.q_id
+HAVING (SUM(b.B_VOL)) = 765
