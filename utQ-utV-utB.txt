@@ -292,3 +292,34 @@ WHERE
 GROUP BY 
     q.q_id
 HAVING (SUM(b.B_VOL)) = 765
+
+Задание: 12 (Serge I: 2006-11-17) 
+Распределить по трем столбцам (построчно) квадраты из таблицы utq в порядке возрастания их идентификаторов.
+Если последняя строка окажется незаполненной, использовать NULL для отсутствующих значений.
+Например, для последовательности идентификаторов {1,2,3,4,5,6,7,8} результат должен выглядеть так:
+
+1   2   3
+
+4   5   6
+
+7   8   NULL
+WITH 
+dsQ AS
+(
+SELECT
+   ROW_NUMBER() OVER(ORDER BY q_id) - (ROW_NUMBER() OVER(ORDER BY q_id) + 2) % 3 id, 
+   IIF((ROW_NUMBER() OVER(ORDER BY q_id) + 2) % 3 = 0,q_id,0) id1,
+   IIF((ROW_NUMBER() OVER(ORDER BY q_id) + 1) % 3 = 0,q_id,0) id2,
+   IIF((ROW_NUMBER() OVER(ORDER BY q_id) + 0) % 3 = 0,q_id,0) id3
+FROM
+   utQ
+)
+SELECT 
+   IIF(SUM(id1) = 0,NULL,SUM(id1)), 
+   IIF(SUM(id2) = 0,NULL,SUM(id2)), 
+   IIF(SUM(id3) = 0,NULL,SUM(id3))
+FROM 
+   dsQ
+GROUP BY 
+   id
+
