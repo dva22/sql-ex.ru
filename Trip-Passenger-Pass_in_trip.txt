@@ -377,4 +377,29 @@ WHERE
 GROUP BY
     p.Id_psg
 
+
+Задание: 14 (Serge I: 2003-04-08) 
+Определить номера пассажиров, приземлявшихся в городах, из которых они ранее в тот же день вылетали. 
+Вывод: ID_psg, дата.
+SELECT
+   distinct p.ID_psg,
+    p.date
+FROM
+    Trip t,
+    Pass_in_trip p
+WHERE
+    t.trip_no = p.trip_no and
+    exists  (SELECT
+                     pOut.ID_psg
+                 FROM
+                     Trip tOut,
+                     Pass_in_trip pOut
+                 WHERE
+                     tOut.trip_no = pOut.trip_no and 
+                     pOut.ID_psg = p.ID_psg and
+                     tOut.town_from = t.town_to and
+                 DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),p.date) = pOut.date
+                   and  tOut.time_out < t.time_in
+                  )
+
 ***/

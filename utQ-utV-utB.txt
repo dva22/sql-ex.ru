@@ -323,3 +323,42 @@ FROM
 GROUP BY 
    id
 
+Задание: 13 (ZrenBy: 2003-09-01) 
+Найти баллончик, который при окраске одного квадрата использовался первым по времени, а для другого - последним.
+Вывести имена баллончика, квадрата, для которого этот баллончик был первым, и квадрата, для которого этот баллончик был последним.
+WITH
+dsBmin AS
+(
+SELECT
+   b_q_id,
+   b_v_id
+FROM
+   utB bOut
+WHERE not exists(select * from utB B0 where B0.B_Q_ID=bOut.B_Q_ID and B0.B_DATETIME < bOut.B_DATETIME )  
+
+),
+dsBmax AS
+(
+SELECT
+   b_q_id,
+   b_v_id
+FROM
+   utB bOut
+WHERE  not exists(select * from utB B0 where B0.B_Q_ID=bOut.B_Q_ID and B0.B_DATETIME > bOut.B_DATETIME )
+
+)
+SELECT 
+   utv.v_name,
+   utQ.q_name,
+   utQ1.q_name
+FROM
+   dsBmin b1,
+   dsBmax b2,
+   utQ,
+   utV,
+   utQ utQ1 
+WHERE
+   b1.b_v_id = b2.b_v_id and 
+  b1.b_q_id <> b2.b_q_id and b1.b_q_id=utQ.Q_ID and b1.b_v_id = utV.v_ID
+and b2.b_q_id=utQ1.Q_ID
+
