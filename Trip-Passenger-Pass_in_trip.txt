@@ -402,4 +402,33 @@ WHERE
                    and  tOut.time_out < t.time_in
                   )
 
+Задание: 15 (Дмитрий Гринкевич: 2012-04-20) 
+Для каждого пассажира, который летал на самолётах разных авиакомпаний, найти количество полетов на самолетах каждой из этих авиакомпаний, а также общее количество полётов пассажира.
+Вывод: имя пассажира, количество полётов, название компании или "FLIGHTS_TOTAL" для общего количества.
+
+WITH dsPsg AS
+(SELECT p.ID_psg,
+        COUNT(*) trip_Qty,
+        t.ID_comp idComp
+ FROM Trip t, Pass_in_trip p
+ WHERE p.trip_no = t.trip_no
+ GROUP BY p.ID_psg, t.ID_comp
+)
+SELECT
+   (SELECT name FROM Passenger WHERE ID_psg = dsPsg.ID_psg),
+   SUM(trip_Qty),
+   COALESCE((SELECT name FROM Company WHERE ID_comp = dsPsg.idComp),'FLIGHTS_TOTAL')
+FROM 
+   dsPsg
+WHERE
+   ID_psg in (SELECT
+                  ID_psg
+              FROM 
+                  dsPsg
+              GROUP BY 
+                  ID_psg
+              HAVING COUNT(DISTINCT idComp) > 1
+              )
+GROUP BY GROUPING SETS((ID_psg, idComp),(ID_psg))
+
 ***/
