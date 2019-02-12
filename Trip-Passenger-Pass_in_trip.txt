@@ -431,4 +431,20 @@ WHERE
               )
 GROUP BY GROUPING SETS((ID_psg, idComp),(ID_psg))
 
+«адание: 17 (VIG: 2003-04-29) 
+ќпределить названи€ тех авиакомпаний, множество типов самолетов каждой из которых содержит все непустое множество типов самолетов хот€ бы одной другой компании.
+
+SELECT DISTINCT
+   (SELECT name FROM Company WHERE ID_comp=t.ID_comp)
+FROM
+   Trip t,
+   Trip t1
+WHERE
+   t.ID_comp <> t1.ID_comp AND
+   t.plane = t1.plane
+GROUP BY 
+   t.ID_comp, t1.ID_comp
+HAVING 
+   COUNT(DISTINCT t.plane) = 
+   (SELECT COUNT(DISTINCT tIn.plane) FROM Trip tIn WHERE tIn.ID_comp=t1.ID_comp)
 ***/
