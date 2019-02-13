@@ -362,3 +362,36 @@ WHERE
   b1.b_q_id <> b2.b_q_id and b1.b_q_id=utQ.Q_ID and b1.b_v_id = utV.v_ID
 and b2.b_q_id=utQ1.Q_ID
 
+«адание: 18 (ZrenBy: 2003-09-01) 
+¬ыбрать все белые квадраты, которые окрашивались только из баллончиков, пустых к насто€щему времени. ѕричем эти баллончики были использованы только дл€ белых квадратов. 
+¬ывести им€ квадрата
+WITH
+dsV AS
+(
+SELECT
+    b.b_v_id id
+FROM
+    utB b
+WHERE
+    b.b_q_id in (SELECT
+    b.b_q_id 
+FROM
+    utB b
+GROUP BY 
+    b.b_q_id
+HAVING 
+    (SUM(b.B_VOL)) = 765)
+GROUP BY 
+    b.b_v_id
+HAVING 
+    (SUM(b.B_VOL)) = 255
+)
+SELECT
+    (SELECT q_name FROM utQ where b.B_Q_ID = Q_ID)
+FROM
+    utB b
+WHERE
+    b.B_V_ID in (SELECT id FROM dsV)
+GROUP BY 
+    b.B_Q_ID
+HAVING (SUM(b.B_VOL)) = 765
