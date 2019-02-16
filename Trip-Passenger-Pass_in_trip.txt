@@ -447,4 +447,81 @@ GROUP BY
 HAVING 
    COUNT(DISTINCT t.plane) = 
    (SELECT COUNT(DISTINCT tIn.plane) FROM Trip tIn WHERE tIn.ID_comp=t1.ID_comp)
+
+«адание: 19 (Serge I: 2004-06-23) 
+
+ќпределить сколько раз кажда€ буква (латинска€ без учета регистра) встречалась на всех проданных билетах.
+
+Ќа билете имеетс€ следующа€ информаци€: название компании и самолета, названи€ городов отправлени€ и назначени€, номер места и им€ пассажира.
+
+¬ывод: буква, количество повторений этой буквы
+WITH 
+dsS AS
+(
+SELECT
+   c.name + 
+   CAST(t.plane AS VARCHAR) +
+   CAST(t.town_from AS VARCHAR) +
+   CAST(t.town_to AS VARCHAR) +
+   CAST(pt.place AS VARCHAR) +   
+   CAST(p.name AS VARCHAR) s
+FROM
+   Pass_in_trip pt
+   INNER JOIN Trip t ON t.trip_no = pt.trip_no
+   INNER JOIN Passenger p ON p.ID_psg = pt.ID_psg
+   INNER JOIN Company c ON c.ID_comp = t.ID_comp
+)
+SELECT 
+    value,
+    SUM(DATALENGTH(s) -DATALENGTH(replace(s,value,'')))
+FROM 
+    dsS,  
+    (VALUES('a'),('b'),('c'),('d'),('e'),('f'),('g'),('h'),('i'),('j'),('k'),('l'),('m'),('n'),('o'),('p'),('q'),('r'),('s'),('t'),('u'),('v'),('w'),('x'),('y'),('z')) X(value)
+group by value
+
+«адание: 20 (VIG: 2003-09-01) 
+ќпределить интервалы полных дней в течение с 28/03/2003 по 28/04/2003 включительно, когда аэропорт –остова был закрыт (из-за нелетной погоды), т.е. не прин€л и не выпустил ни одного рейса. 
+¬ывод: начальна€ и конечна€ даты интервала дней, когда не было рейсов.
+ѕримечание: даты выводить в формате "YYYY-MM-DD".
+SELECT
+   FORMAT(DATEADD(day,1,date), 'yyyy-MM-dd'),
+   FORMAT(DATEADD(day,-1,next), 'yyyy-MM-dd')
+FROM (
+SELECT
+   date,
+   COALESCE(LEAD(date) OVER (ORDER BY date), date) next,
+   DATEDIFF(day,
+            date,
+            COALESCE(LEAD(date) OVER (ORDER BY date), date)
+           ) diff
+FROM 
+   (SELECT
+   DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),pt.date) date
+FROM 
+   Trip t
+   INNER JOIN Pass_in_trip pt ON t.trip_no = pt.trip_no
+WHERE
+   (t.town_to = 'Rostov') and
+   DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),pt.date) >= '2003.03.28' and
+   DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),pt.date) <= '2003.04.28'
+UNION
+SELECT
+   pt.date
+FROM 
+   Trip t
+   INNER JOIN Pass_in_trip pt ON t.trip_no = pt.trip_no
+WHERE
+   (t.town_from = 'Rostov') and
+   pt.date >= '2003.03.28' and
+   pt.date <= '2003.04.28'
+UNION
+ SELECT
+ '2003.03.27' 
+UNION
+ SELECT
+ '2003.04.29') dsD
+) dsD1 
+WHERE 
+    diff>1
+
 ***/
