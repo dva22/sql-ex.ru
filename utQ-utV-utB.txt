@@ -446,3 +446,34 @@ FROM
 GROUP BY
    name
 
+Задание: 22 (ZrenBy: 2003-09-01) 
+Для всех квадратов, последняя окраска которых была в июне любого года, найти окрашивающие их баллончики при условии, что эти баллончики использовались еще и для квадратов, окраска которых началась в феврале следующего года. Вывести имена "июньского" квадрата, баллончика и "февральского" квадрата.
+
+WITH 
+dsQ AS
+(
+SELECT
+   b_q_id id,
+   MAX(B_DATETIME) max,
+   MIN(B_DATETIME) min   
+FROM
+   utB
+GROUP BY 
+   b_q_id
+)
+SELECT DISTINCT 
+   (SELECT q_name FROM utQ WHERE q_id = q.id),
+   (SELECT v_name FROM utV WHERE v_id = b.b_v_id),
+   (SELECT q_name FROM utQ WHERE q_id = q1.id)     
+FROM
+   utB b,
+   utB b1,
+   dsQ q1,
+   dsQ q 
+WHERE
+   q.id = b.b_q_id AND
+   DATEPART(month, q1.min) = 2 AND
+   DATEPART(YEAR, q1.min) - 1 = DATEPART(YEAR, q.max) AND
+   q1.id = b1.b_q_id AND
+   b1.b_v_id = b.b_v_id AND
+   DATEPART(month, q.max) = 6
