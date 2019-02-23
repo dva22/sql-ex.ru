@@ -535,4 +535,67 @@ select model,
 (datalength(model)-datalength(REPLACE(model, '9', '')))*9
 from product
 
+Задание: 24 (Aaz: 2004-02-26) 
+Получить стоимость прописью для каждой комбинации модель-цена тех ПК, стоимость которых не достигает $1000. При этом число прописью представляется строкой char(50) без ведущих пробелов, слова в которой разделяются одним пробелом. 
+Вывод: модель, цена, цена прописью.
+Справка:
+единицы (1 - 10): one, two, three, four, five, six, seven, eight, nine, ten;
+(11 - 19): eleven, twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen;
+десятки (20 - 90): twenty, thirty, forty, fifty, sixty, seventy, eighty, ninety;
+сотни (100 - 900): one, two, three, four, five, six, seven, eight, nine (hundred)
+Замечание. В проверочной базе все цены представлены целыми числами.
+SELECT DISTINCT
+   model,
+   CAST(price AS INT),
+   TRIM(Case   
+       WHEN price >= 900 THEN 'nine hundred' 
+       WHEN price >= 800 THEN 'eight hundred' 
+       WHEN price >= 700 THEN 'seven hundred'
+       WHEN price >= 600 THEN 'six hundred'
+       WHEN price >= 500 THEN 'five hundred'
+       WHEN price >= 400 THEN 'four hundred'
+       WHEN price >= 300 THEN 'three hundred'
+       WHEN price >= 200 THEN 'two hundred'
+       WHEN price >= 100 THEN 'one hundred'
+       ELSE ''
+  END +
+  Case   
+       WHEN price % 100 >= 90 THEN ' ninety' 
+       WHEN price % 100 >= 80 THEN ' eighty' 
+       WHEN price % 100 >= 70 THEN ' seventy'
+       WHEN price % 100 >= 60 THEN ' sixty'
+       WHEN price % 100 >= 50 THEN ' fifty'
+       WHEN price % 100 >= 40 THEN ' forty'
+       WHEN price % 100 >= 30 THEN ' thirty'
+       WHEN price % 100 >= 20 THEN ' twenty'
+       WHEN price % 100 = 19 THEN ' nineteen'
+       WHEN price % 100 = 18 THEN ' eighteen'
+       WHEN price % 100 = 17 THEN ' seventeen'
+       WHEN price % 100 = 16 THEN ' sixteen'
+       WHEN price % 100 = 15 THEN ' fifteen'
+       WHEN price % 100 = 14 THEN ' fourteen'
+       WHEN price % 100 = 13 THEN ' thirteen'
+       WHEN price % 100 = 12 THEN ' twelve'
+       WHEN price % 100 = 11 THEN ' eleven'
+       WHEN price % 100 = 10 THEN ' ten'
+       ELSE ''
+  END+
+  Case   
+  WHEN price % 10 = 9 AND (price % 100 >= 20 OR price % 100 <= 9) THEN ' nine' 
+  WHEN price % 10 = 8 AND (price % 100 >= 20 OR price % 100 <= 8) THEN ' eight' 
+  WHEN price % 10 = 7 AND (price % 100 >= 20 OR price % 100 <= 7) THEN ' seven'
+  WHEN price % 10 = 6 AND (price % 100 >= 20 OR price % 100 <= 6) THEN ' six'
+  WHEN price % 10 = 5 AND (price % 100 >= 20 OR price % 100 <= 5) THEN ' five'
+  WHEN price % 10 = 4 AND (price % 100 >= 20 OR price % 100 <= 4) THEN ' four'
+  WHEN price % 10 = 3 AND (price % 100 >= 20 OR price % 100 <= 3) THEN ' three'
+  WHEN price % 10 = 2 AND (price % 100 >= 20 OR price % 100 <= 2) THEN ' two'
+  WHEN price % 10 = 1 AND (price % 100 >= 20 OR price % 100 <= 1) THEN ' one'
+  ELSE ''
+  END)
+FROM 
+   PC
+WHERE
+   price < 1000
+
+
 ***/
