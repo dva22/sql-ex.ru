@@ -524,4 +524,42 @@ UNION
 WHERE 
     diff>1
 
+«адание: 25 (DimaN: 2004-06-22) 
+»з пассажиров, которые не вылетали в субботу и воскресенье или же вылетали реже, чем за все остальные дни, найти тех, кто чаще остальных (из их числа) прилетал в понедельник. 
+¬ывести имена пассажиров.
+WITH 
+dsP AS
+(
+SELECT DISTINCT
+   pt.id_psg id,
+   (SELECT count(id_psg)
+    FROM Pass_in_trip
+    WHERE DATEPART(weekday, date) in (1, 7) and id_psg = pt.id_psg
+   ) c,
+   (SELECT count(id_psg)
+    FROM Pass_in_trip
+    WHERE DATEPART(weekday, date) not in (1, 7) and id_psg = pt.id_psg
+   ) c1   
+FROM
+   Trip t
+   INNER JOIN Pass_in_trip pt ON t.trip_no = pt.trip_no
+GROUP BY 
+   pt.id_psg 
+
+)
+SELECT
+ TOP 1 WITH TIES (select name from Passenger p where p.id_psg = id) 
+FROM 
+   dsP
+   INNER JOIN Pass_in_trip pt ON dsP.id = pt.id_psg
+   INNER JOIN Trip t ON t.trip_no = pt.trip_no
+WHERE 
+   DATEPART(weekday, DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),pt.date)) = 2
+   and (dsP.c = 0 or dsP.c < dsP.c1)
+GROUP BY 
+   id
+ORDER BY 
+   COUNT(*) desc
+
+
 ***/
