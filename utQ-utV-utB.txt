@@ -510,3 +510,21 @@ GROUP BY
 ORDER BY 
    SUM(b_vol) DESC, MAX(b.b_datetime)
 ) times
+
+Задание: 27 (Fiolent: 2004-02-26) 
+Среди интервалов длительностью не более 4 секунд (включая границы), в начальной и конечной точке которых производилась окраска, определить те, в течение которых расход краски максимален. 
+Считать, что окраска происходит мгновенно в момент времени, заданный в поле b_datetime.
+Вывести начало интервала, конец интервала, расход краски. 
+SELECT  TOP 1 WITH TIES
+   min(b1.b_datetime),
+   Max(b1.b_datetime),
+   SUM(b1.b_vol)
+FROM 
+   utB b1 
+   INNER JOIN (SELECT distinct b_datetime FROM utB) b 
+   ON b1.b_datetime >= b.b_datetime AND
+      b1.b_datetime <= DATEADD(second, 3, b.b_datetime)
+GROUP BY
+   b.b_datetime
+ORDER BY 
+   SUM(b1.b_vol) DESC
