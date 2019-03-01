@@ -528,3 +528,32 @@ GROUP BY
    b.b_datetime
 ORDER BY 
    SUM(b1.b_vol) DESC
+Задание: 28 (ZrenBy: 2003-09-01) 
+Выбрать все белые квадраты, которые окрашивались только баллончиками, израсходованными к настоящему времени. При этом среди баллончиков должен быть хотя бы один, которым окрашивалось более двух любых квадратов. Вывести имя квадрата, имя этого баллончика(ов), и количество квадратов, окрашенных этим баллончиком
+WITH
+dsAll as
+(
+SELECT 
+   B_Q_ID,
+   B_V_ID,
+   (select  SUM(b_vol) from utB where b_q_id=b.b_q_id) s1,
+   (select  SUM(b_vol) from utB where b_v_id=b.b_v_id) s2,
+   (select  count(distinct b_q_id) from utB where b_v_id=b.b_v_id) c
+FROM
+   utB b
+)
+SELECT 
+   (SELECT q_name FROM utQ where B_Q_ID = Q_ID),
+   (SELECT v_name FROM utV where B_V_ID = V_ID),
+   max(c)
+FROM 
+   dsAll a
+where
+    s1 = 765 and 
+    s2 = 255 and 
+    c>2 and
+    B_Q_ID not in (select B_Q_ID from dsAll where s2<255)
+GROUP BY
+    B_Q_ID, B_V_ID
+
+
