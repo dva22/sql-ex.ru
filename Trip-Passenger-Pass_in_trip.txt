@@ -562,4 +562,68 @@ ORDER BY
    COUNT(*) desc
 
 
+«адание: 29 (GiBis: 2011-09-16) 
+—оздать выписку по прилетевшим и вылетевшим из ћосквы рейсам. —лева от времени вылета/посадки в ћоскве - информаци€ о прилетавших рейсах, справа - о вылетавших.
+≈сли вылеты и посадки выполн€лись в одно врем€, то они объедин€ютс€ в строки в пор€дке возрастани€ номеров рейсов, т.е. первой парой будут вылет и посадка с наименьшими номерами рейсов и т.д.
+ аждый рейс попадает в итоговую выборку один раз, при отсутствии пары строка дополн€етс€ null-значени€ми.
+¬ывод: авиакомпани€, город отправлени€, номер рейса, дата и врем€ (вылета/посадки в ћоскве) в формате "YYYY-MM-DD hh:mm", номер рейса, город назначени€, авиакомпани€.
+with
+dsAll as
+(
+SELECT
+   MAX(t.ID_comp) idCompFrom,
+   MAX(t.town_from) tfrom,
+   t.trip_no tripFrom,
+   DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),pt.date) + t.time_in date,
+   NULL idCompIn,
+   NULL tIn,
+   NULL tripIn,
+   ROW_NUMBER() OVER(PARTITION BY 
+                     DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),pt.date) + 
+                     t.time_in 
+                     ORDER BY t.trip_no) num 
+FROM
+   Trip t
+   INNER JOIN Pass_in_trip pt ON pt.trip_no = t.trip_no
+WHERE
+   t.town_to = 'Moscow'
+GROUP BY 
+   t.trip_no,
+   DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),pt.date) + t.time_in
+UNION ALL
+SELECT
+   NULL idCompFrom,
+   NULL tfrom,
+   NULL tripFrom,
+   pt.date + t.time_out date,
+   MAX(t.ID_comp) idCompIn,
+   MAX(t.town_to) tIn,
+   t.trip_no tripIn,
+   ROW_NUMBER() OVER(PARTITION BY 
+                     pt.date +t.time_out
+                     ORDER BY t.trip_no
+                     ) num 
+FROM
+   Trip t
+   INNER JOIN Pass_in_trip pt ON pt.trip_no = t.trip_no
+WHERE
+   t.town_from = 'Moscow'
+GROUP BY 
+   t.trip_no,
+   pt.date + t.time_out
+)
+SELECT
+   (select name from Company where id_comp = max(idCompFrom)),
+   max(tfrom),
+   max(tripFrom),
+   format(date,'yyyy-MM-dd HH:mm'),
+   max(tripIn),
+   max(tIn),
+   (select name from Company where id_comp = max(idCompIn))
+FROM 
+   dsAll
+group by 
+   date, 
+   num
+
 ***/
