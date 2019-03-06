@@ -626,4 +626,27 @@ group by
    date, 
    num
 
+«адание: 30 (Serge I: 2003-08-28) 
+Ќайти пары пассажиров, которые хот€ бы дважды летели вместе на соседних местах в одном р€ду кресел. 
+¬ывести имена таких пассажиров в пор€дке возрастани€ их номеров (id_psg).SELECT 
+   (SELECT name FROM Passenger WHERE id_psg = pt.id_psg),
+   (SELECT name FROM Passenger WHERE id_psg = pt1.id_psg)
+FROM
+   Pass_in_trip pt,
+   Pass_in_trip pt1
+WHERE
+   pt.trip_no = pt1.trip_no and
+   pt.date  = pt1.date  and
+   SUBSTRING(pt.place, 0, len(pt.place) ) =
+   SUBSTRING(pt1.place, 0, len(pt1.place) ) and
+   ABS(ASCII(SUBSTRING(pt.place, len(pt.place) , 100)) -
+       ASCII(SUBSTRING(pt1.place, len(pt1.place) , 100))) = 1 and
+   pt.id_psg <
+   pt1.id_psg
+GROUP BY 
+   pt.id_psg,
+   pt1.id_psg
+HAVING 
+   COUNT(*) >= 2
+
 ***/
