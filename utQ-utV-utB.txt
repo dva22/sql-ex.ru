@@ -611,3 +611,58 @@ FROM
   utB q
 group by 
   b_q_id
+
+Задание: 33 (DimaN: 2004-03-01) 
+Найти все квадраты, при окраске каждого из которых было использовано следующее количество каждой краски: красной от 0 до 50 включительно; зеленой – 50–100; синей - 100-150. 
+При этом любая пара баллончиков, использованная для окраски квадрата, удовлетворяющего условию по количеству краски, не должна встречаться еще на каком-либо квадрате, удовлетворяющему этому же условию. 
+Вывести id квадрата.
+WITH
+dsAll AS
+(
+SELECT
+   b1.b_q_id,
+   b1.b_v_id,
+   SUM(IIF(v.v_color = 'R', b1.b_vol, 0)) OVER(PARTITION BY b1.b_q_id) R,
+   SUM(IIF(v.v_color = 'G', b1.b_vol, 0)) OVER(PARTITION BY b1.b_q_id) G,
+   SUM(IIF(v.v_color = 'B', b1.b_vol, 0)) OVER(PARTITION BY b1.b_q_id) B
+FROM 
+   utB b1,
+   utV v
+WHERE 
+   b1.b_v_id = v.v_id
+),
+dsDAll as
+(
+SELECT
+   a1.b_q_id,
+   a1.b_v_id v1, 
+   a2.b_v_id v2
+FROM 
+   dsAll a1
+   INNER JOIN dsAll a2 ON a1.b_q_id = a2.b_q_id and a1.b_v_id < a2.b_v_id
+WHERE
+   a1.R BETWEEN 0 AND 50 AND
+   a1.G BETWEEN 50 AND 100 AND
+   a1.B BETWEEN 100 AND 150 
+
+)
+SELECT DISTINCT
+   a3.b_q_id
+FROM 
+   dsDAll a3
+WHERE
+   a3.b_q_id NOT IN
+(SELECT 
+   a1.b_q_id
+FROM 
+   dsDAll a1
+WHERE
+   a1.b_q_id IN (SELECT a1.b_q_id FROM dsDAll a2 
+                        WHERE
+                           a2.b_q_id <> a1.b_q_id AND
+                           a2.v1 = a1.v1 AND
+                           a2.v2 = a1.v2 
+                       )
+)
+
+

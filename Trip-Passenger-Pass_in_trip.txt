@@ -649,4 +649,71 @@ GROUP BY
 HAVING 
    COUNT(*) >= 2
 
+«адание: 34 (qwrqwr: 2010-09-24) 
+ƒл€ каждого пассажира, совершавшего рейсы, рассмотреть отдельно первую и вторую половину его рейсов (в хронологическом пор€дке).
+ѕри нечЄтном числе рейсов у пассажира большее число рейсов отнести к первой половине списка.
+ѕо каждой группе рейсов пассажира получить следующую информацию:
+- при наличии только одного рейса в группе - название авиакомпании и номер этого рейса (через зап€тую с пробелом);
+- при нескольких рейсах в группе - суммарное врем€ этих рейсов в формате "H hrs., N min." (не выводить часы или минуты если они равны 0);
+- при отсутствии рейсов в группе - пустую строку.
+¬ывести: »м€ пассажира, информаци€ по первой части его рейсов, информаци€ по второй части его рейсов.
+WITH 
+dsP AS
+(
+SELECT
+   pt.ID_psg,
+   concat(
+   (SELECT TOP 1 trim(name) FROM Company WHERE ID_comp = t.ID_comp),', ',pt.trip_no) comp,
+   DATEDIFF(minute , 
+            pt.date + t.time_out,
+            DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),pt.date) + t.time_in
+           ) min,
+   IIF(ROW_NUMBER() OVER (PARTITION BY pt.ID_psg ORDER BY pt.date + t.time_out) 
+        <= CEILING(COUNT(*) OVER (PARTITION BY pt.ID_psg)/2.0),1,2) as gr
+FROM
+   Pass_in_trip pt
+   INNER JOIN Trip t ON t.trip_no = pt.trip_no
+),
+dsG as
+(
+SELECT 
+   ID_psg,
+   iif(gr = 1,
+       iif(count(ID_psg) = 1, max(comp),
+           iif(SUM(min)>60,concat(floor(SUM(min)/60.0) , ' hrs.'),'')+
+          iif(SUM(min) - floor(SUM(min)/60.0)*60 > 0 and SUM(min)>60, ', ','')+
+          iif(SUM(min) - floor(SUM(min)/60.0)*60 > 0, 
+              concat(SUM(min) - floor(SUM(min)/60.0)*60, ' min.'),
+              ''
+             )
+       ),
+       ''
+      ) g1,
+   iif(gr = 2,
+       iif(count(ID_psg) = 1, max(comp), 
+          iif(SUM(min)>60,concat(floor(SUM(min)/60.0) , ' hrs.'),'')+
+          iif(SUM(min) - floor(SUM(min)/60.0)*60 > 0 and SUM(min)>60, ', ','')+
+          iif(SUM(min) - floor(SUM(min)/60.0)*60 > 0, 
+              concat(SUM(min) - floor(SUM(min)/60.0)*60, ' min.'),
+              ''
+             )
+          ),
+       ''
+      ) g2
+FROM
+   dsP
+GROUP BY 
+   ID_psg,
+   gr
+)
+SELECT
+   (SELECT name FROM Passenger where ID_psg = dsG.ID_psg),
+   max(g1),
+   max(g2)
+FROM 
+   dsG 
+group by 
+   ID_psg
+
+
 ***/
