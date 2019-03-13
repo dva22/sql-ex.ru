@@ -597,5 +597,124 @@ FROM
 WHERE
    price < 1000
 
+Задание: 37 (qwrqwr: 2013-02-22) 
+Для таблицы Laptop выбрать в каждом из столбцов speed, ram, hd, price, screen наиболее часто встречающееся в этом столбце значение (моду), а если в столбце окажется несколько мод - взять максимальную из них.
+Из уникальных значений полученных мод сформировать упорядоченный по возрастанию список, разделенный запятыми.
+Замечание: все известные характеристики ПК-блокнотов в базе представлены целыми числами, при перечислении значений мод в строку десятичные нули не выводить.
+Для каждой строки таблицы Laptop подсчитать, сколько значений из speed, ram, hd, price, screen встречаются в полученном списке мод.
+Вывод: code; сформированный список мод; количество совпадений; speed; ram; hd; price; screen.
+WITH 
+dsD AS
+(
+select 
+(SELECT
+   TOP 1
+   CAST(speed AS int)
+FROM
+   Laptop
+where speed > 0
+GROUP BY 
+   speed
+ORDER BY 
+   COUNT(*) DESC, speed DESC
+) speed
+,
+(SELECT
+   TOP 1
+   CAST(hd AS int)
+FROM
+   Laptop
+where hd > 0
+GROUP BY 
+   hd
+ORDER BY 
+  COUNT(*) DESC, hd DESC
+) hd
+,
+(SELECT
+   TOP 1
+   CAST(ram AS int)
+FROM
+   Laptop--(select ram from Laptop union all select 32 union all select 32) l
+where ram> 0
+GROUP BY 
+   ram
+ORDER BY 
+  COUNT(*) DESC, ram DESC
+) ram
+,
+(SELECT
+   TOP 1
+   CAST(price AS int)
+FROM
+   Laptop
+where price > 0
+GROUP BY 
+   price
+ORDER BY 
+  COUNT(*) DESC, price DESC
+) price
+,(SELECT
+   TOP 1
+   CAST(screen AS int)
+FROM
+   Laptop
+where screen > 0
+GROUP BY 
+   screen
+ORDER BY 
+  COUNT(*) DESC, screen DESC
+) screen
+),
+dsS AS
+(SELECT
+   speed
+ FROM 
+   dsD
+ UNION
+ SELECT
+   ram
+ FROM 
+   dsD
+ UNION 
+SELECT
+   hd
+ FROM 
+   dsD
+ UNION 
+SELECT
+   price
+ FROM 
+   dsD
+ UNION
+SELECT
+   screen
+ FROM 
+   dsD
+),
+dsS1 AS
+(
+SELECT
+   STRING_AGG(speed,',') WITHIN GROUP ( ORDER BY speed) s
+FROM
+   dsS)
+SELECT
+  l.code,
+   (select top 1 s from dsS1) mlist,
+   IIF(l.speed IN (d.speed, d.ram, d.hd, d.price, d.screen), 1,0)+
+	IIF(l.ram IN (d.speed, d.ram, d.hd, d.price, d.screen), 1,0)+
+	IIF(l.hd IN (d.speed, d.ram, d.hd, d.price, d.screen), 1,0)+
+	IIF(l.price IN (d.speed, d.ram, d.hd, d.price, d.screen), 1,0)+
+	IIF(l.screen IN (d.speed, d.ram, d.hd, d.price, d.screen), 1,0) 
+   occurs,
+   l.speed,
+   l.ram, 
+   l.hd, 
+   l.price, 
+   l.screen 
+FROM
+   Laptop l,
+   dsD d
+
 
 ***/
