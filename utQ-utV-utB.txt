@@ -766,3 +766,42 @@ SELECT
       ) + 1
 FROM 
    dsG1
+
+«адание: 38 (ZrenBy: 2003-09-01) 
+ƒл€ баллончиков, которые не использовались дл€ окраски белых квадратов и не использовались совместно с баллончиками, которые окрашивали белые квадраты, найти те окрашенные ими квадраты, которые не имеют зелЄной компоненты.
+¬ывести им€ баллончика, им€ квадрата, цвет квадрата в формате (R,G,B), например (012,000,155)
+
+WITH
+dsA AS
+(SELECT
+   b.b_v_id,
+   b.b_q_id,
+   SUM(b.b_vol) OVER (PARTITION BY b.b_q_id) s,
+   SUM(IIF(v.v_color = 'R',b_vol,0)) OVER(PARTITION BY b.b_q_id) r,
+   SUM(IIF(v.v_color = 'G',b_vol,0)) OVER(PARTITION BY b.b_q_id) g,
+   SUM(IIF(v.v_color = 'B',b_vol,0)) OVER(PARTITION BY b.b_q_id) b
+FROM
+   utB b
+   INNER JOIN utV v ON v.v_id = b.b_v_id
+)
+SELECT 
+   (SELECT v_name FROM utV where dsA.B_V_ID = V_ID),
+   (SELECT q_name FROM utQ where dsA.B_Q_ID = Q_ID),
+   MAX(CONCAT(
+          '(',
+          substring(cast(1000 + R as varchar),2,3),
+          ',000,',
+          substring(cast(1000 + B as varchar),2,3),
+          ')'
+         ))
+FROM
+   dsA
+WHERE
+   b_v_id not in (SELECT b_v_id FROM dsA WHERE s = 765) AND
+   g = 0 and
+   b_v_id not in (SELECT b_v_id FROM dsA WHERE b_q_id in 
+                  (SELECT b_q_id FROM dsA WHERE b_v_id in 
+                   (SELECT b_v_id FROM dsA WHERE s = 765)
+                  )
+                 )
+GROUP BY B_Q_ID, B_V_ID
