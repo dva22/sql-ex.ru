@@ -1,0 +1,138 @@
+************************************
+<aero>
+	<company>
+		<row>
+			<id_comp>100</id_comp>
+			<name>test</name>
+		</row>
+		<row>
+			<id_comp>102</id_comp>
+			<name>test</name>
+		</row>
+	</company>
+	<passenger>
+		<row>
+			<id_psg>100</id_psg>
+			<name>test</name>
+		</row>
+		<row>
+			<id_psg>101</id_psg>
+			<name>test</name>
+		</row>
+	</passenger>
+	<trip>
+		<row>
+			<trip_no>100</trip_no>
+			<id_comp>100</id_comp>
+			<plane>plane</plane>
+			<town_from>city1</town_from>
+			<town_to>city2</town_to>
+			<time_out>1900-01-01 00:01:00.000</time_out>
+			<time_in>1900-01-01 23:59:00.000</time_in>
+		</row>
+		<row>
+			<trip_no>101</trip_no>
+			<id_comp>100</id_comp>
+			<plane>plane</plane>
+			<town_from>city2</town_from>
+			<town_to>city1</town_to>
+			<time_out>1900-01-01 00:01:00.000</time_out>
+			<time_in>1900-01-01 23:59:00.000</time_in>
+		</row>
+		<row>
+			<trip_no>102</trip_no>
+			<id_comp>100</id_comp>
+			<plane>plane</plane>
+			<town_from>city1</town_from>
+			<town_to>city2</town_to>
+			<time_out>1900-01-01 00:01:00.000</time_out>
+			<time_in>1900-01-01 23:59:00.000</time_in>
+		</row>
+		<row>
+			<trip_no>103</trip_no>
+			<id_comp>102</id_comp>
+			<plane>plane</plane>
+			<town_from>city2</town_from>
+			<town_to>city1</town_to>
+			<time_out>1900-01-01 00:01:00.000</time_out>
+			<time_in>1900-01-01 23:59:00.000</time_in>
+		</row>
+	</trip>
+	<pass_in_trip>
+		<row>
+			<trip_no>100</trip_no>
+			<date>2003-04-29 00:00:00.000</date>
+			<id_psg>100</id_psg>
+			<place>1a</place>
+		</row>
+		<row>
+			<trip_no>101</trip_no>
+			<date>2003-04-29 00:00:00.000</date>
+			<id_psg>100</id_psg>
+			<place>1a</place>
+		</row>
+		<row>
+			<trip_no>100</trip_no>
+			<date>2003-04-29 00:00:00.000</date>
+			<id_psg>101</id_psg>
+			<place>2g</place>
+		</row>
+		<row>
+			<trip_no>103</trip_no>
+			<date>2003-04-29 00:00:00.000</date>
+			<id_psg>101</id_psg>
+			<place>2g</place>
+		</row>
+	</pass_in_trip>
+</aero>
+*********************************************************
+<aero>
+<company>
+<row>
+<id_comp>6</id_comp>
+<name>6</name>
+</row>
+<row>
+<id_comp>7</id_comp>
+<name>7</name>
+</row>
+</company>
+<trip>
+<row>
+<trip_no>38</trip_no>
+<id_comp>6</id_comp>
+<plane>6</plane>
+<town_from>A</town_from>
+<town_to>B</town_to>
+<time_out>1900-01-01 0:30:00.000</time_out>
+<time_in>1900-01-01 16:30:00.000</time_in>
+</row>
+<row>
+<trip_no>39</trip_no>
+<id_comp>6</id_comp>
+<plane>6</plane>
+<town_from>B</town_from>
+<town_to>A</town_to>
+<time_out>1900-01-01 0:30:00.000</time_out>
+<time_in>1900-01-01 14:00:00.000</time_in>
+</row>
+<row>
+<trip_no>40</trip_no>
+<id_comp>7</id_comp>
+<plane>7</plane>
+<town_from>C</town_from>
+<town_to>D</town_to>
+<time_out>1900-01-01 0:30:00.000</time_out>
+<time_in>1900-01-01 16:30:00.000</time_in>
+</row>
+</trip>
+<pass_in_trip>
+<row>
+<trip_no>38</trip_no>
+<date>1999-1-1</date>
+<id_psg>1</id_psg>
+<place>1A</place>
+</row>
+</pass_in_trip>
+</aero>
+********************************************

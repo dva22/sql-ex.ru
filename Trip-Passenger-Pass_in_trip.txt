@@ -715,5 +715,48 @@ FROM
 group by 
    ID_psg
 
+Задание: 39 (Serge I: 2003-08-28) 
+Для каждой компании, совершающей самые продолжительные рейсы, определить количество перевезенных ею пассажиров (если таковые были) по маршрутам самых продолжительных рейсов этой компании (туда и/или обратно). 
+Вывод:название компании, число пассажиров. 
+WITH
+dsT AS
+(SELECT  TOP 1 WITH TIES 
+   t.id_comp,
+   t.town_from,
+   t.town_to
+FROM
+   Trip t
+ORDER BY
+   (DATEDIFF(minute, 
+            t.time_out, 
+             DATEADD(DAY,IIF(t.time_in<t.time_out,1,0),t.time_in)
+           )) DESC
+),
+dsG as (
+SELECT   
+    dsT.id_comp,
+    t.trip_no,
+   (SELECT COUNT(pt.ID_psg) FROM Pass_in_trip pt WHERE trip_no = t.trip_no) s
+FROM 
+    Trip t
+    INNER JOIN dsT  ON 
+          ((t.town_to = dsT.town_to and t.town_from = dsT.town_from) or
+           (t.town_to = dsT.town_from and t.town_from = dsT.town_to)
+          ) and
+          t.id_comp = dsT.id_comp    
+        
+GROUP BY
+    dsT.id_comp, 
+    t.trip_no
+)
+SELECT
+    (SELECT name FROM Company WHERE id_comp = dsG.id_comp),
+    sum(s)
+FROM
+    dsG
+WHERE 
+    s > 0
+GROUP BY 
+    dsG.id_comp
 
 ***/
