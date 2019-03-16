@@ -1,0 +1,35 @@
+«адание: 40 (Serge I: 2018-09-07) 
+–ассматриваютс€ пункты приема вторсырь€ с отчетностью несколько раз в день.
+ќпределить процент выплат каждого пункта в общем итоге за каждый день, дл€ которого есть запись в таблице Outcome.
+¬ывод: день в формате "yyyy-mm-dd", проценты каждого пункта (округленные до целого) в пор€дке возрастани€ номеров пунктов через пробел.
+WITH
+dsS AS
+(
+SELECT 
+    p.point,
+    d.date,
+    (SELECT COALESCE(SUM(out),0) 
+     FROM Outcome 
+     WHERE point = p.point and date = d.date) sum
+FROM
+   (SELECT DISTINCT point FROM Outcome UNION
+    SELECT DISTINCT point FROM Income) p,
+   (SELECT DISTINCT date FROM Outcome) d
+),
+dsP AS
+(
+SELECT
+   point,
+   date,
+   CAST((sum/
+         SUM(sum) OVER(PARTITION BY date)) * 100 AS int) pers
+FROM
+   dsS
+)
+SELECT
+   FORMAT(date,'yyyy-MM-dd'),
+   STRING_AGG(pers, ' ') WITHIN GROUP(ORDER BY point)   
+FROM
+   dsP
+GROUP BY 
+   date

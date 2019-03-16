@@ -1,0 +1,54 @@
+*****************************************************************
+<incout>
+	<outcome>
+		<row>
+			<code>1</code>
+			<point>10</point>
+			<date>2001-03-14 00:00:00.000</date>
+			<out>100</out>
+		</row>
+		<row>
+			<code>2</code>
+			<point>2</point>
+			<date>2001-03-14 00:00:00.000</date>
+			<out>0.49</out>
+		</row>
+		<row>
+			<code>3</code>
+			<point>3</point>
+			<date>2001-03-14 00:00:00.000</date>
+			<out>0.01</out>
+		</row>
+		<row>
+			<code>4</code>
+			<point>4</point>
+			<date>2001-03-14 00:00:00.000</date>
+			<out>0</out>
+		</row>
+		<row>
+			<code>5</code>
+			<point>5</point>
+			<date>2001-03-14 00:00:00.000</date>
+			<out>0</out>
+		</row>
+		<row>
+			<code>6</code>
+			<point>1</point>
+			<date>2001-03-14 00:00:00.000</date>
+			<out>100</out>
+		</row>
+		<row>
+			<code>7</code>
+			<point>1</point>
+			<date>2001-03-14 00:00:00.000</date>
+			<out>0</out>
+		</row>
+		<row>
+			<code>8</code>
+			<point>1</point>
+			<date>2001-03-14 00:00:00.000</date>
+			<out>0</out>
+		</row>
+	</outcome>
+</incout>
+***************************************
