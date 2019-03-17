@@ -759,4 +759,66 @@ WHERE
 GROUP BY 
     dsG.id_comp
 
+Задание: 41 (qwrqwr: 2010-04-26) 
+Вывести по одному разу такие пары городов (town_from, town_to), которые связаны авиарейсами только друг с другом.
+При наличии как прямого, так и обратного рейсов выводить в качестве города отправления тот город, который идет раньше при сортировке по возрастанию.
+WITH
+dsT AS
+(
+ SELECT
+    town_from t1,
+    COUNT(DISTINCT town_to) c,
+    MAX(town_to) t2
+ FROM
+    (select town_from, town_to from Trip t union
+     select town_to, town_from from Trip t
+    ) trip
+ GROUP BY 
+    town_from
+)
+SELECT  distinct
+   iif(    EXISTS(SELECT town_from 
+               FROM Trip
+               WHERE town_from = t.t1 and town_to = t.t2) and 
+           EXISTS(SELECT town_from 
+               FROM Trip
+               WHERE town_from = t.t2 and town_to = t.t1),iif(t1>t2,t2,t1),
+   iif(    not EXISTS(SELECT town_from 
+               FROM Trip
+               WHERE town_from = t.t1 and town_to = t.t2) and 
+           EXISTS(SELECT town_from 
+               FROM Trip
+               WHERE town_from = t.t2 and town_to = t.t1),t2,
+   t1)),
+   iif(    EXISTS(SELECT town_from 
+               FROM Trip
+               WHERE town_from = t.t1 and town_to = t.t2) and 
+           EXISTS(SELECT town_from 
+               FROM Trip
+               WHERE town_from = t.t2 and town_to = t.t1),iif(t1>t2,t1,t2),
+   iif(    not EXISTS(SELECT town_from 
+               FROM Trip
+               WHERE town_from = t.t1 and town_to = t.t2) and 
+           EXISTS(SELECT town_from 
+               FROM Trip
+               WHERE town_from = t.t2 and town_to = t.t1),t1,
+   t2))
+FROM
+   dsT t
+WHERE
+   t.c = 1 AND 
+   ((SELECT max(t2) 
+           FROM dsT 
+           WHERE t1 = t.t2
+          ) = t.t1 and
+    (SELECT max(c) 
+           FROM dsT 
+           WHERE t1 = t.t2
+          ) = 1 or
+    NOT EXISTS(SELECT t1 
+               FROM dsT 
+               WHERE t1 = t.t2)
+   )
+
+
 ***/
