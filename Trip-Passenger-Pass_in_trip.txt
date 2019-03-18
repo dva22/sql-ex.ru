@@ -820,5 +820,53 @@ WHERE
                WHERE t1 = t.t2)
    )
 
+«адание: 42 (Serge I: 2003-06-05) 
+ƒл€ пассажиров, проведших больше всего времени в полетах, определить общее врем€ этих полетов, а также название компании, в самолетах которой они летали большую часть этого времени.
+¬ывод: им€ пассажира, общее врем€ его полетов в минутах, название компании.
+WITH
+dsT AS
+(
+SELECT
+   pt.ID_psg,
+   SUM(DATEDIFF(minute, 
+                time_out, 
+                DATEADD(DAY, IIF(time_out > time_in, 1, 0), time_in)
+               )
+      ) OVER (PARTITION BY pt.ID_psg) sumP,
+   SUM(DATEDIFF(minute, 
+                time_out, 
+                DATEADD(DAY, IIF(time_out > time_in, 1, 0), time_in)
+               )
+      ) OVER (PARTITION BY pt.ID_psg, t.ID_comp) sumC,
+   t.ID_comp
+FROM
+   Trip t
+   INNER JOIN Pass_in_trip pt ON pt.trip_no = t.trip_no
+)
+SELECT 
+   (SELECT name FROM Passenger WHERE ID_psg = t.ID_psg),
+   max(sumP),
+   (SELECT name FROM Company WHERE ID_comp = (t.ID_comp))
+FROM
+   dsT t
+WHERE 
+   ID_psg in (SELECT TOP 1 WITH TIES
+                 ID_psg
+              FROM
+                 dsT
+              ORDER BY 
+                 sumP DESC
+              ) AND
+   ID_comp in (SELECT TOP 1 WITH TIES
+                 ID_comp
+               FROM
+                 dsT
+               WHERE
+                 t.ID_psg = ID_psg
+               ORDER BY 
+                 sumC DESC
+              )
+GROUP BY
+   ID_psg, ID_comp
 
 ***/
