@@ -1,0 +1,404 @@
+*****************************************************************
+<painting>
+	<utq>
+		<row>
+			<q_id>1</q_id>
+			<q_name>q1</q_name>
+		</row>
+		<row>
+			<q_id>2</q_id>
+			<q_name>q2</q_name>
+		</row>
+	</utq>
+	<utv>
+		<row>
+			<v_id>1</v_id>
+			<v_name>v1</v_name>
+			<v_color>R</v_color>
+		</row>
+		<row>
+			<v_id>2</v_id>
+			<v_name>v2</v_name>
+			<v_color>R</v_color>
+		</row>
+		<row>
+			<v_id>3</v_id>
+			<v_name>v3</v_name>
+			<v_color>G</v_color>
+		</row>
+		<row>
+			<v_id>4</v_id>
+			<v_name>v4</v_name>
+			<v_color>G</v_color>
+		</row>
+		<row>
+			<v_id>5</v_id>
+			<v_name>v5</v_name>
+			<v_color>B</v_color>
+		</row>
+		<row>
+			<v_id>6</v_id>
+			<v_name>v6</v_name>
+			<v_color>B</v_color>
+		</row>
+	</utv>
+	<utb>
+		<row>
+			<b_datetime>2001-01-01 01:13:37.000</b_datetime>
+			<b_q_id>1</b_q_id>
+			<b_v_id>1</b_v_id>
+			<b_vol>255</b_vol>
+		</row>
+		<row>
+			<b_datetime>2001-01-01 01:13:37.000</b_datetime>
+			<b_q_id>1</b_q_id>
+			<b_v_id>2</b_v_id>
+			<b_vol>255</b_vol>
+		</row>
+		<row>
+			<b_datetime>2001-01-01 01:13:37.000</b_datetime>
+			<b_q_id>1</b_q_id>
+			<b_v_id>3</b_v_id>
+			<b_vol>255</b_vol>
+		</row>
+		<row>
+			<b_datetime>2001-01-01 01:13:37.000</b_datetime>
+			<b_q_id>2</b_q_id>
+			<b_v_id>4</b_v_id>
+			<b_vol>255</b_vol>
+		</row>
+		<row>
+			<b_datetime>2010-01-01 01:13:37.000</b_datetime>
+			<b_q_id>2</b_q_id>
+			<b_v_id>5</b_v_id>
+			<b_vol>255</b_vol>
+		</row>
+		<row>
+			<b_datetime>2000-01-01 01:13:37.000</b_datetime>
+			<b_q_id>2</b_q_id>
+			<b_v_id>6</b_v_id>
+			<b_vol>250</b_vol>
+		</row>
+	</utb>
+</painting>
+***************************************
+<painting>
+<utq>
+<row>
+<q_id>1000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>2000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>3000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>4000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>5000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>6000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>7000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>8000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>9000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>10000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>11000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>12000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>13000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>14000</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>1</q_id>
+<q_name>q</q_name>
+</row>
+<row>
+<q_id>2</q_id>
+<q_name>q</q_name>
+</row>
+</utq>
+<utv>
+<row>
+<v_id>1000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>2000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>3000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>4000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>5000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>6000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>7000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>8000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>9000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>10000</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>11000</v_id>
+<v_name>v</v_name>
+<v_color>g</v_color>
+</row>
+<row>
+<v_id>12000</v_id>
+<v_name>v</v_name>
+<v_color>g</v_color>
+</row>
+<row>
+<v_id>13000</v_id>
+<v_name>v</v_name>
+<v_color>g</v_color>
+</row>
+<row>
+<v_id>14000</v_id>
+<v_name>v</v_name>
+<v_color>g</v_color>
+</row>
+<row>
+<v_id>1</v_id>
+<v_name>v</v_name>
+<v_color>r</v_color>
+</row>
+<row>
+<v_id>2</v_id>
+<v_name>v</v_name>
+<v_color>g</v_color>
+</row>
+</utv>
+<utb>
+<row>
+<b_datetime>1900-01-01 00:00:00.000</b_datetime>
+<b_q_id>1000</b_q_id>
+<b_v_id>1000</b_v_id>
+<b_vol>255</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-01 00:00:01.000</b_datetime>
+<b_q_id>2000</b_q_id>
+<b_v_id>2000</b_v_id>
+<b_vol>252</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-01 00:00:02.000</b_datetime>
+<b_q_id>3000</b_q_id>
+<b_v_id>3000</b_v_id>
+<b_vol>251</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-01 00:00:04.000</b_datetime>
+<b_q_id>4000</b_q_id>
+<b_v_id>4000</b_v_id>
+<b_vol>252</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-01 00:00:04.000</b_datetime>
+<b_q_id>5000</b_q_id>
+<b_v_id>5000</b_v_id>
+<b_vol>255</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-02 00:00:00.000</b_datetime>
+<b_q_id>6000</b_q_id>
+<b_v_id>6000</b_v_id>
+<b_vol>255</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-02 00:00:01.000</b_datetime>
+<b_q_id>7000</b_q_id>
+<b_v_id>7000</b_v_id>
+<b_vol>252</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-02 00:00:02.000</b_datetime>
+<b_q_id>8000</b_q_id>
+<b_v_id>8000</b_v_id>
+<b_vol>251</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-02 00:00:02.000</b_datetime>
+<b_q_id>9000</b_q_id>
+<b_v_id>9000</b_v_id>
+<b_vol>252</b_vol>
+</row>
+<row>
+<b_datetime>1900-01-02 00:00:04.000</b_datetime>
+<b_q_id>10000</b_q_id>
+<b_v_id>10000</b_v_id>
+<b_vol>255</b_vol>
+</row>
+<row>
+<b_datetime>1890-01-01 00:00:00.000</b_datetime>
+<b_q_id>11000</b_q_id>
+<b_v_id>11000</b_v_id>
+<b_vol>255</b_vol>
+</row>
+<row>
+<b_datetime>1890-01-01 00:00:00.000</b_datetime>
+<b_q_id>12000</b_q_id>
+<b_v_id>12000</b_v_id>
+<b_vol>255</b_vol>
+</row>
+<row>
+<b_datetime>1890-01-01 00:00:00.000</b_datetime>
+<b_q_id>13000</b_q_id>
+<b_v_id>13000</b_v_id>
+<b_vol>250</b_vol>
+</row>
+<row>
+<b_datetime>1890-01-01 00:00:00.000</b_datetime>
+<b_q_id>14000</b_q_id>
+<b_v_id>14000</b_v_id>
+<b_vol>250</b_vol>
+</row>
+<row>
+<b_datetime>1890-01-01 00:00:00.000</b_datetime>
+<b_q_id>1</b_q_id>
+<b_v_id>2</b_v_id>
+<b_vol>155</b_vol>
+</row>
+<row>
+<b_datetime>1890-01-01 00:00:00.000</b_datetime>
+<b_q_id>2</b_q_id>
+<b_v_id>2</b_v_id>
+<b_vol>100</b_vol>
+</row>
+<row>
+<b_datetime>1890-01-01 00:00:00.000</b_datetime>
+<b_q_id>1</b_q_id>
+<b_v_id>1</b_v_id>
+<b_vol>155</b_vol>
+</row>
+<row>
+<b_datetime>1890-01-01 00:00:00.000</b_datetime>
+<b_q_id>2</b_q_id>
+<b_v_id>1</b_v_id>
+<b_vol>100</b_vol>
+</row>
+</utb>
+</painting>
+*********************************************************
+<painting>
+	<utq>
+		<row>
+			<q_id>1</q_id>
+			<q_name>q1</q_name>
+		</row>
+		<row>
+			<q_id>2</q_id>
+			<q_name>q2</q_name>
+		</row>
+	</utq>
+	<utv>
+		<row>
+			<v_id>1</v_id>
+			<v_name>v1</v_name>
+			<v_color>R</v_color>
+		</row>
+		<row>
+			<v_id>2</v_id>
+			<v_name>v2</v_name>
+			<v_color>R</v_color>
+		</row>
+		<row>
+			<v_id>3</v_id>
+			<v_name>v3</v_name>
+			<v_color>G</v_color>
+		</row>
+		<row>
+			<v_id>4</v_id>
+			<v_name>v4</v_name>
+			<v_color>G</v_color>
+		</row>
+		<row>
+			<v_id>5</v_id>
+			<v_name>v5</v_name>
+			<v_color>B</v_color>
+		</row>
+		<row>
+			<v_id>6</v_id>
+			<v_name>v6</v_name>
+			<v_color>B</v_color>
+		</row>
+	</utv>
+	<utb>
+		<row>
+			<b_datetime>2001-01-01 01:13:37.000</b_datetime>
+			<b_q_id>1</b_q_id>
+			<b_v_id>1</b_v_id>
+			<b_vol>250</b_vol>
+		</row>
+		<row>
+			<b_datetime>2000-01-01 01:13:37.000</b_datetime>
+			<b_q_id>1</b_q_id>
+			<b_v_id>1</b_v_id>
+			<b_vol>5</b_vol>
+		</row>
+	</utb>
+</painting>
+************************************************

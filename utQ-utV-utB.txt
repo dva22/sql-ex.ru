@@ -805,3 +805,77 @@ WHERE
                   )
                  )
 GROUP BY B_Q_ID, B_V_ID
+
+Задание: 43 (qwrqwr: 2015-04-24) 
+По итогам дня машины вывозят из мастерской опустевшие баллоны, в одну машину всегда помещается ровно 5 баллонов. Остаток не вывозят, пока не накопится 5 пустых баллонов.
+Определить число машин для каждого дня, когда вывозили баллоны: в первом столбце дата (ГГГГ-ММ-ДД), во втором число машин.
+Отдельно двумя строками вывести: остаток невывезенных пустых баллонов (текст 'empty_rest' и число) и количество начатых, но еще не пустых баллонов в мастерской (текст 'nonempty_rest' и число).
+WITH
+dsD AS
+(SELECT
+   max(b_datetime) date
+FROM
+   utB
+GROUP BY 
+   FORMAT(b_datetime, 'yyyy-MM-dd')
+),
+dsS AS
+(SELECT
+   d.date,
+   b.b_v_id,
+   sum(b.b_vol) sum
+FROM
+   utB b,
+   dsD d
+WHERE
+   b.b_datetime <= d.date
+GROUP BY 
+   d.date, b.b_v_id
+),
+dsS1 AS
+(SELECT
+   date,
+   COUNT(DISTINCT b_v_id) c,
+   FLOOR(COUNT(DISTINCT b_v_id) / 5) c5
+FROM
+   dsS
+WHERE 
+   sum >=255
+GROUP BY 
+   date
+),
+dsCl AS
+(
+SELECT
+   date,
+   c,
+   c5,
+   lag(c5,1,0) OVER(ORDER BY date) cl
+FROM
+   dsS1
+)
+
+SELECT
+   FORMAT(date, 'yyyy-MM-dd'),
+   c5 - cl
+FROM
+   dsCl
+WHERE 
+   cl < c5
+UNION ALL
+SELECT TOP 1
+   'empty_rest', 
+    FIRST_VALUE(c) OVER(ORDER BY date DESC) % 5
+FROM
+   (SELECT C, date FROM dsCl 
+    union all 
+    select 0,'1900-01-01') c5
+UNION ALL
+SELECT TOP 1
+   'nonempty_rest', 
+    FIRST_VALUE(M.C) OVER(ORDER BY M.date DESC)
+FROM
+   (SELECT COUNT(DISTINCT b_v_id) C ,date FROM dsS where sum < 255
+    and date = (select max(date) from dsS) GROUP BY date
+    union all 
+    select 0,'1900-01-01') M
