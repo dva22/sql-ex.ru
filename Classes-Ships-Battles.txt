@@ -390,4 +390,48 @@ DATEPART(month,DATEFROMPARTS(DATEPART(year,b.date),
                                      )
                )
 
+«адание: 44 (Serge I: 2011-11-25) 
+Ќайти все такие пары кораблей в Ѕƒ, имена которых состо€т из одних и тех же символов без учета их регистра и пробелов (например, "saaB" и "bas sa" удовлетвор€ют условию). 
+¬ывод: им€ корабл€, которое при сортировке по возрастанию идет раньше; им€ корабл€, которое при сортировке по возрастанию идет позже.
+WITH
+dsS AS
+(SELECT  s.name
+    FROM Ships s    
+    UNION 
+    SELECT o.ship
+    FROM Outcomes o
+)
+SELECT 
+   s1.name,
+   s2.name   
+FROM 
+   dsS s1,
+   dsS s2
+WHERE
+    s1.name < s2.name and
+   (SELECT  LOWER(STRING_AGG(STR,'')) FROM
+   (SELECT
+      SUBSTRING(REPLACE(s2.name,' ',''),X.value,1) STR 
+    FROM 
+     (values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),
+             (11),(12),(13),(14),(15),(16),(17),(18),(19),(20),
+             (21),(22),(23),(24),(25),(26),(27),(28),(29),(30)
+     ) X(value)
+    GROUP BY 
+     SUBSTRING(REPLACE(s2.name,' ',''),X.value,1)
+    
+   ) STR)=
+   (SELECT  LOWER(STRING_AGG(STR,'')) FROM
+   (SELECT
+      SUBSTRING(REPLACE(s1.name,' ',''),X.value,1) STR 
+    FROM 
+     (values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),
+             (11),(12),(13),(14),(15),(16),(17),(18),(19),(20),
+             (21),(22),(23),(24),(25),(26),(27),(28),(29),(30)
+     ) X(value)
+    GROUP BY 
+     SUBSTRING(REPLACE(s1.name,' ',''),X.value,1)
+    
+   ) STR)
+
 ***/
