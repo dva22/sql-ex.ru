@@ -137,3 +137,308 @@
 </outcomes>
 </ships>
 ********************************************
+<ships>
+	<classes>
+		<row>
+			<class>a</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>8</numguns>
+			<bore>15.0</bore>
+			<displacement>42000</displacement>
+		</row>
+		<row>
+			<class>b</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>11</numguns>
+			<bore>15.0</bore>
+			<displacement>42000</displacement>
+		</row>
+		<row>
+			<class>cccca</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>11</numguns>
+			<bore>15.0</bore>
+			<displacement>42000</displacement>
+		</row>
+	</classes>
+	<battles>
+		<row>
+			<name>b1</name>
+			<date>1900-01-02 00:00:00.000</date>
+		</row>
+		<row>
+			<name>b2</name>
+			<date>1900-01-03 00:00:00.000</date>
+		</row>
+	</battles>
+	<ships>
+		<row>
+			<name>ffuuu12390</name>
+			<class>a</class>
+			<launched>1900</launched>
+		</row>
+		<row>
+			<name>ffffffuuu uuuuuu19230</name>
+			<class>a</class>
+			<launched>1999</launched>
+		</row>
+		<row>
+			<name>ABC0</name>
+			<class>a</class>
+			<launched>1911</launched>
+		</row>
+		<row>
+			<name>bca0 232</name>
+			<class>a</class>
+			<launched>1922</launched>
+		</row>
+		<row>
+			<name>abc   01</name>
+			<class>a</class>
+			<launched>1911</launched>
+		</row>
+		<row>
+			<name>a2 c 10</name>
+			<class>a</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name>2a b c0</name>
+			<class>a</class>
+			<launched>1112</launched>
+		</row>
+		<row>
+			<name>0bca 232</name>
+			<class>a</class>
+			<launched>1231</launched>
+		</row>
+		<row>
+			<name>bbb1b 1</name>
+			<class>a</class>
+			<launched>1231</launched>
+		</row>
+		<row>
+			<name>BÂBB 2</name>
+			<class>a</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name>b0ca 232</name>
+			<class>a</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name>aaa</name>
+			<class>a</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name>aaaa</name>
+			<class>b</class>
+			<launched>111</launched>
+		</row>
+		<row>
+			<name>ac</name>
+			<class>a</class>
+			<launched>111</launched>
+		</row>
+		<row>
+			<name>aca</name>
+			<class>cccca</class>
+			<launched>1111</launched>
+		</row>
+	</ships>
+	<outcomes>
+		<row>
+			<ship>b a a c0</ship>
+			<battle>b1</battle>
+			<result>OK</result>
+		</row>
+		<row>
+			<ship>0 000</ship>
+			<battle>b1</battle>
+			<result>SUNK</result>
+		</row>
+		<row>
+			<ship>ABC0</ship>
+			<battle>b1</battle>
+			<result>SUNK</result>
+		</row>
+		<row>
+			<ship>AB     C0</ship>
+			<battle>b2</battle>
+			<result>OK</result>
+		</row>
+	</outcomes>
+</ships>
+*****************************
+<ships>
+	<classes>
+		<row>
+			<class>a</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>8</numguns>
+			<bore>15.0</bore>
+			<displacement>42000</displacement>
+		</row>
+		<row>
+			<class>b</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>11</numguns>
+			<bore>15.0</bore>
+			<displacement>42000</displacement>
+		</row>
+		<row>
+			<class>cccca</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>11</numguns>
+			<bore>15.0</bore>
+			<displacement>42000</displacement>
+		</row>
+		<row>
+			<class>acccc</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>11</numguns>
+			<bore>11</bore>
+			<displacement>11</displacement>
+		</row>
+		<row>
+			<class>cccca1</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>11</numguns>
+			<bore>11</bore>
+			<displacement>11</displacement>
+		</row>
+		<row>
+			<class>ABC0</class>
+			<type>bb</type>
+			<country>Germany</country>
+			<numguns>11</numguns>
+			<bore>11</bore>
+			<displacement>11</displacement>
+		</row>
+	</classes>
+	<battles>
+		<row>
+			<name>b1</name>
+			<date>1900-01-02 00:00:00.000</date>
+		</row>
+		<row>
+			<name>b2</name>
+			<date>1900-01-03 00:00:00.000</date>
+		</row>
+	</battles>
+	<ships>
+		<row>
+			<name>qwe qwe qwe qwe qwe qwe qwe qwe qwe qwe  ds1a 1dsa</name>
+			<class>a</class>
+			<launched>1922</launched>
+		</row>
+		<row>
+			<name>asd asd asd asd asd asd asd asd asd asd  asd  ads</name>
+			<class>a</class>
+			<launched>1911</launched>
+		</row>
+		<row>
+			<name>gsd gsd gsd gsd gsd gsd gsd gsd gsd gsd  gsd  gsd</name>
+			<class>a</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name>gsa gsa gsa gsa gsa gsa gsa gsa gsa gsa  gsa  dsg</name>
+			<class>a</class>
+			<launched>1112</launched>
+		</row>
+		<row>
+			<name>qwertyuiopasdfghjklzxcvbnm1234567890-=_+*/"~''&lt;&lt;|!</name>
+			<class>a</class>
+			<launched>1231</launched>
+		</row>
+		<row>
+			<name>bbbb 1</name>
+			<class>a</class>
+			<launched>1231</launched>
+		</row>
+		<row>
+			<name>BBBB 2</name>
+			<class>a</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name>b0ca 232</name>
+			<class>a</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name>   q{1</name>
+			<class>a</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name> 1q{</name>
+			<class>b</class>
+			<launched>111</launched>
+		</row>
+		<row>
+			<name>ac</name>
+			<class>a</class>
+			<launched>111</launched>
+		</row>
+		<row>
+			<name>aca</name>
+			<class>acccc</class>
+			<launched>1111</launched>
+		</row>
+		<row>
+			<name> 1b </name>
+			<class>cccca</class>
+			<launched>22</launched>
+		</row>
+		<row>
+			<name>b1</name>
+			<class>cccca1</class>
+			<launched>22</launched>
+		</row>
+		<row>
+			<name>0ABC</name>
+			<class>ABC0</class>
+			<launched>22</launched>
+		</row>
+		<row>
+			<name>AB     C0</name>
+			<class>cccca</class>
+			<launched>22</launched>
+		</row>
+	</ships>
+	<outcomes>
+		<row>
+			<ship>b a a c0</ship>
+			<battle>b1</battle>
+			<result>OK</result>
+		</row>
+		<row>
+			<ship>0 000</ship>
+			<battle>b1</battle>
+			<result>SUNK</result>
+		</row>
+		<row>
+			<ship>ABC0</ship>
+			<battle>b1</battle>
+			<result>SUNK</result>
+		</row>
+		<row>
+			<ship>AB     C0</ship>
+			<battle>b2</battle>
+			<result>OK</result>
+		</row>
+	</outcomes>
+</ships>
+*****************************************
