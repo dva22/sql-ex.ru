@@ -879,3 +879,62 @@ FROM
     and date = (select max(date) from dsS) GROUP BY date
     union all 
     select 0,'1900-01-01') M
+
+Задание: 47 (qwrqwr: 2010-11-19) 
+Каждый окрашенный квадрат обрабатывался по техническому заданию (ТЗ). В ТЗ для квадрата указывается необходимая этапность (последовательность) окраски и требуемый цвет на каждом этапе окраски. 
+Каждый этап определяется моментом времени окраски, а цвет на каждом этапе формируется сочетанием RGB-составляющих с учетом их объемов. 
+Вывести названия всех пар квадратов, ТЗ на окраску у которых одинаковы (первым выводить квадрат с меньшим Q_ID).
+WITH
+dsD AS
+(SELECT DISTINCT
+   b_datetime date
+FROM
+   utB
+),
+dsS AS
+(SELECT
+   d.date,
+   b.b_q_id,
+   CONCAT('R=',sum(IIF(v.v_color = 'R', b.b_vol, 0)),
+          'G=',sum(IIF(v.v_color = 'G', b.b_vol, 0)),
+          'B=',sum(IIF(v.v_color = 'B', b.b_vol, 0))) c
+FROM
+   utB b,
+   dsD d,
+   utV v
+WHERE
+   b.b_datetime <= d.date AND
+   v.v_id = b.b_v_id
+
+GROUP BY 
+   d.date, b.b_q_id
+),
+dsS1 AS
+(SELECT
+   b_q_id,
+   c, 
+   max(date) date
+FROM
+   dsS
+GROUP BY 
+   b_q_id, c
+),
+dsS2 AS
+(SELECT
+   b_q_id,
+   STRING_AGG(c,',')  WITHIN GROUP (ORDER BY date) c
+FROM
+   dsS1
+GROUP BY 
+   b_q_id
+)
+SELECT
+   (SELECT q_name FROM utQ WHERE q_id = s1.b_q_id),
+   (SELECT q_name FROM utQ WHERE q_id = s2.b_q_id)
+FROM 
+   dsS2 s1,
+   dsS2 s2
+WHERE
+   s1.b_q_id < s2.b_q_id and
+   s1.c = s2.c
+
