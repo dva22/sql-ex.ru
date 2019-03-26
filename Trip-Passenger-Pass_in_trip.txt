@@ -962,4 +962,59 @@ SELECT
  (SELECT FORMAT(max,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =4 ), 
  (SELECT FORMAT(max,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =5 )
 
+«адание: 50 (mslava: 2003-12-23) 
+ѕри следующих предположени€х:
+
+- в любом самолете 4 места в одном р€ду;
+
+- билеты имеют сквозную нумерацию на все места, начина€ с 1000 в пор€дке: дата рейса, номер рейса, пор€дковый номер места в салоне самолЄта;
+
+- число мест в салонах самолетов: boeing = 220 , tu-134 = 70, tu-154 = 160, il-86 = 340, другие = 90
+
+восстановить нумерацию проданных билетов.
+
+¬ывод: Ќомер билета, дата, номер рейса, им€ пассажира
+SELECT  
+  dsP.plane+
+  999 + (SUBSTRING(pt.place, 0, len(pt.place)) - 1) * 4 + 
+  CASE SUBSTRING(pt.place, len(pt.place) , 100)
+       WHEN 'a' THEN 1
+       WHEN 'b' THEN 2
+       WHEN 'c' THEN 3
+       WHEN 'd' THEN 4
+       ELSE 0
+  END -
+  CASE t.plane
+       WHEN 'Boeing' THEN 220
+       WHEN 'tu-134' THEN 70
+       WHEN 'tu-154' THEN 160
+       WHEN 'il-86' THEN 340
+       ELSE 90
+  END,
+  pt.date, 
+  pt.trip_no,
+  (SELECT name FROM Passenger WHERE id_psg = pt.id_psg)
+FROM
+  Trip t
+  INNER JOIN Pass_in_trip pt ON t.trip_no = pt.trip_no,
+  (SELECT
+  pt.date, 
+  pt.trip_no,
+  sum(CASE MAX(t.plane)
+       WHEN 'Boeing' THEN 220
+       WHEN 'tu-134' THEN 70
+       WHEN 'tu-154' THEN 160
+       WHEN 'il-86' THEN 340
+       ELSE 90
+  END)
+  over (order by pt.date,pt.trip_no) plane
+FROM
+  Trip t
+  INNER JOIN Pass_in_trip pt ON t.trip_no = pt.trip_no
+GROUP BY 
+  pt.date, 
+  pt.trip_no) dsP
+WHERE
+  dsP.date = pt.date and dsP.trip_no = pt.trip_no
+
 ***/
