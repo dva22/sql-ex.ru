@@ -869,4 +869,97 @@ WHERE
 GROUP BY
    ID_psg, ID_comp
 
+«адание: 49 (anddros: 2009-06-05) 
+¬ рамках акции, посв€щенной юбилею компании British_aw, директор по работе с клиентами решил вручить пам€тные подарки п€ти пассажирам, налетавшим самолетами компании больше всего времени. ќн дал задание IT-отделу подготовить список таких пассажиров в виде следующей таблицы: 
+- в первой строке - имена пассажиров (1.name); 
+- во второй - врем€ налета в минутах (2.time); 
+- в третьей - количество полетов (3.cou); 
+- в четвертой - дата первого вылета (4.time_out); 
+- в п€той - дата последнего прилета (5.time_in); 
+- в первом столбце - название характеристики; 
+- во втором-шестом столбцах - характеристики первого-п€того пассажира соответственно. 
+ѕервый-п€тый пассажиры определ€ютс€: по убыванию времени налета, возрастанию id_psg.
+WITH
+dsP AS
+(
+SELECT 
+   pt.ID_psg,
+   SUM(DATEDIFF(minute, 
+                time_out, 
+                DATEADD(DAY, IIF(time_out > time_in, 1, 0), time_in)
+               )
+      ) OVER (PARTITION BY pt.ID_psg) sumP,
+   COUNT(pt.ID_psg) OVER (PARTITION BY pt.ID_psg) c,
+   MIN(date + time_out) OVER (PARTITION BY pt.ID_psg) min,
+   MAX(date +
+       DATEADD(DAY, IIF(time_out > time_in, 1, 0), time_in)
+      ) OVER (PARTITION BY pt.ID_psg) max
+FROM
+   Trip t
+   INNER JOIN Pass_in_trip pt ON pt.trip_no = t.trip_no
+WHERE 
+   t.ID_comp = 5
+),
+dsP1 AS
+(
+SELECT 
+   ROW_NUMBER() OVER (ORDER BY MAX(sumP) DESC, ID_PSG) num, 
+   (SELECT name FROM Passenger WHERE id_psg = p.ID_PSG) name, 
+   MAX(sumP) sum,
+   MAX(c) c,
+   MAX(min) min,
+   MAX(max) max
+FROM 
+   dsP p
+WHERE p.ID_psg in ( SELECT ID_PSG FROM (
+                   SELECT DISTINCT TOP 5 
+                      ID_PSG, sumP
+                   FROM 
+                      dsP
+                   ORDER BY 
+                     sumP DESC, ID_PSG ) T
+                  )
+GROUP BY 
+  ID_PSG
+)
+SELECT 
+ '1.name', 
+ (SELECT name FROM dsP1 WHERE num =1 ), 
+ (SELECT name FROM dsP1 WHERE num =2 ), 
+ (SELECT name FROM dsP1 WHERE num =3 ), 
+ (SELECT name FROM dsP1 WHERE num =4 ), 
+ (SELECT name FROM dsP1 WHERE num =5 )
+UNION ALL
+SELECT 
+ '2.time', 
+ (SELECT cast(sum as varchar) FROM dsP1 WHERE num =1 ), 
+ (SELECT cast(sum as varchar) FROM dsP1 WHERE num =2 ), 
+ (SELECT cast(sum as varchar) FROM dsP1 WHERE num =3 ), 
+ (SELECT cast(sum as varchar) FROM dsP1 WHERE num =4 ), 
+ (SELECT cast(sum as varchar) FROM dsP1 WHERE num =5 )
+UNION ALL
+SELECT 
+ '3.cou', 
+ (SELECT cast(c as varchar) FROM dsP1 WHERE num =1 ), 
+ (SELECT cast(c as varchar) FROM dsP1 WHERE num =2 ), 
+ (SELECT cast(c as varchar) FROM dsP1 WHERE num =3 ), 
+ (SELECT cast(c as varchar) FROM dsP1 WHERE num =4 ), 
+ (SELECT cast(c as varchar) FROM dsP1 WHERE num =5 )
+UNION ALL
+SELECT 
+ '4.time_out', 
+ (SELECT FORMAT(min,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =1 ), 
+ (SELECT FORMAT(min,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =2 ), 
+ (SELECT FORMAT(min,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =3 ), 
+ (SELECT FORMAT(min,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =4 ), 
+ (SELECT FORMAT(min,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =5 )
+UNION ALL
+SELECT 
+ '5.time_in', 
+ (SELECT FORMAT(max,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =1 ), 
+ (SELECT FORMAT(max,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =2 ), 
+ (SELECT FORMAT(max,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =3 ), 
+ (SELECT FORMAT(max,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =4 ), 
+ (SELECT FORMAT(max,'yyyy-MM-dd HH:mm:ss') FROM dsP1 WHERE num =5 )
+
 ***/

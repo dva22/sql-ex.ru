@@ -136,3 +136,87 @@
 </pass_in_trip>
 </aero>
 ********************************************
+<aero>
+	<company>
+		<row>
+			<id_comp>5</id_comp>
+			<name>British_AW</name>
+		</row>
+	</company>
+	<passenger>
+		<row>
+			<id_psg>1</id_psg>
+			<name>Konstantin Khabensky</name>
+		</row>
+		<row>
+			<id_psg>2</id_psg>
+			<name>Kevin Costner</name>
+		</row>
+		<row>
+			<id_psg>3</id_psg>
+			<name>George Clooney</name>
+		</row>
+		<row>
+			<id_psg>4</id_psg>
+			<name>Donald Sutherland</name>
+		</row>
+		<row>
+			<id_psg>5</id_psg>
+			<name>Bruce Willis</name>
+		</row>
+		<row>
+			<id_psg>6</id_psg>
+			<name>Bruce Willis</name>
+		</row>
+	</passenger>
+	<trip>
+		<row>
+			<trip_no>8881</trip_no>
+			<id_comp>5</id_comp>
+			<plane>Boeing</plane>
+			<town_from>London</town_from>
+			<town_to>Paris</town_to>
+			<time_out>1900-01-01 03:00:00.000</time_out>
+			<time_in>1900-01-01 04:00:00.000</time_in>
+		</row>
+	</trip>
+	<pass_in_trip>
+		<row>
+			<trip_no>8881</trip_no>
+			<date>2019-02-06 00:00:00.000</date>
+			<id_psg>1</id_psg>
+			<place>1a</place>
+		</row>
+		<row>
+			<trip_no>8881</trip_no>
+			<date>2019-02-06 00:00:00.000</date>
+			<id_psg>2</id_psg>
+			<place>2b</place>
+		</row>
+		<row>
+			<trip_no>8881</trip_no>
+			<date>2019-02-06 00:00:00.000</date>
+			<id_psg>3</id_psg>
+			<place>3c</place>
+		</row>
+		<row>
+			<trip_no>8881</trip_no>
+			<date>2019-02-06 00:00:00.000</date>
+			<id_psg>4</id_psg>
+			<place>4d</place>
+		</row>
+		<row>
+			<trip_no>8881</trip_no>
+			<date>2019-02-06 00:00:00.000</date>
+			<id_psg>5</id_psg>
+			<place>5a</place>
+		</row>
+		<row>
+			<trip_no>8881</trip_no>
+			<date>2019-02-06 00:00:00.000</date>
+			<id_psg>6</id_psg>
+			<place>6b</place>
+		</row>
+	</pass_in_trip>
+</aero>
+*****************************************
