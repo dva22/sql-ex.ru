@@ -938,3 +938,39 @@ WHERE
    s1.b_q_id < s2.b_q_id and
    s1.c = s2.c
 
+«адание: 51 (Fiolent: 2004-06-23) 
+Ќайти квадраты, которые окрашивались не менее 3 раз подр€д баллончиками одного и того 
+же цвета. ѕри одновременной окраске считать, что баллончики используютс€ в пор€дке 
+возрастани€ их номеров. ¬ывести номер квадрата,
+цвет и количество окрасок подр€д этим цветом (группа), дата-врем€ первой окраски в этой группе, дата-врем€ последней окраски в этой группе.
+WITH 
+dsQ AS
+(
+SELECT
+   b.b_q_id,
+   ROW_NUMBER() OVER(PARTITION BY b.b_q_id  
+               ORDER BY b.b_datetime, v.v_id
+              ) -
+   ROW_NUMBER() OVER(PARTITION BY b.b_q_id , v.v_color 
+               ORDER BY b.b_datetime, v.v_id
+              ) numC,   
+   b.b_datetime,
+   v.v_color
+FROM
+   utB b
+   INNER JOIN utV v ON v.v_id = b.b_v_id
+)
+SELECT 
+   b_q_id,
+   v_color,
+   COUNT(*),
+   MIN(b_datetime),
+   MAX(b_datetime)
+FROM
+   dsQ
+GROUP BY 
+   b_q_id,
+   numC,
+   v_color
+HAVING 
+   COUNT(*) >= 3
