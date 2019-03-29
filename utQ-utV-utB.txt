@@ -974,3 +974,50 @@ GROUP BY
    v_color
 HAVING 
    COUNT(*) >= 3
+
+Задание: 52 (Serge I: 2015-01-10) 
+Для каждого цвета имеющейся в БД краски перечислить через запятую идентификаторы баллончиков данного цвета в порядке возрастания. 
+Для более двух идущих подряд ИД использовать дефис. Например, для списка ИД 3,4,7,8,9,12 результат должен быть таким:
+3,4,7-9,12.
+Вывод: цвет (V_COLOR), список идентификаторов.
+SELECT
+  DSd1.v_color,
+  STUFF(
+       (SELECT iif(c = 1 ,concat(',',min),
+                   iif(c = 2 ,concat(',',min,',',max),
+                                   concat(',',min,'-',max)
+                      )
+                  )    
+        FROM
+           (SELECT 
+   v_color,
+   gr,
+   min(v_id) min,
+   max(v_id) max,
+   count(*) c
+FROM
+(
+SELECT
+   v_id - ROW_NUMBER() OVER(PARTITION BY v_color ORDER BY v_id) gr,
+   v_color,
+   v_id
+FROM
+   utV
+) dsD
+GROUP BY 
+   v_color,
+   gr
+) dsD3
+        WHERE 
+            v_color = dsD1.v_color
+        ORDER BY 
+            min FOR XML PATH('')
+       ),1,1,'')
+FROM
+(SELECT distinct
+   v_color
+FROM
+   utV) dsD1
+GROUP BY 
+   dsD1.v_color
+
