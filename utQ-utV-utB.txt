@@ -1021,3 +1021,35 @@ FROM
 GROUP BY 
    dsD1.v_color
 
+Задание: 53 (DimaN: 2004-03-01) 
+Найти все квадраты, для окраски которых применялись только уникальные пары баллончиков; т.е. если квадрат №1 был окрашен баллончиками 1,2 и 3, то сочетания баллончиков 1-2, 1-3 и 2-3 должны встречаться только на этом квадрате. 
+Вывести id квадратов.
+WITH 
+dsQ AS
+(
+SELECT
+   b1.b_q_id qid1,
+   b1.b_v_id bid1,
+   b2.b_v_id bid2
+FROM
+   utB b1,
+   utB b2
+WHERE
+   b1.b_q_id = b2.b_q_id AND
+   b1.b_v_id < b2.b_v_id
+)
+SELECT distinct q1.qid1 FROM dsQ q1 WHERE q1.qid1 not in (
+SELECT
+   q.qid1
+FROM 
+   dsQ q
+WHERE
+   EXISTS (SELECT q.qid1
+           FROM dsQ 
+           WHERE 
+              q.bid1 = bid1 AND 
+              q.bid2 = bid2 AND
+              q.qid1 <> qid1 
+          )
+)
+
