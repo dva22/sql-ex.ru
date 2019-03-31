@@ -1017,4 +1017,62 @@ GROUP BY
 WHERE
   dsP.date = pt.date and dsP.trip_no = pt.trip_no
 
+Задание: 54 (Ozzy: 2008-09-06) 
+Определить, можно ли на циферблатных часах, показывающих время отправления/прибытия рейса, поменять местами часовую и минутную стрелки так, чтобы такое положение стрелок было возможно при естественном ходе часов. Считать, что на циферблат нанесено 60 делений и обе стрелки перемещаются дискретно по этим делениям. 
+При этом не нужно учитывать случаи положения стрелок "одна над другой" (например, для показаний 00:00, 08:43 и т.п.). 
+Вывод:
+- номер рейса, для которого возможно переставить стрелки ("двойник");
+- обозначение:
+'D' - если есть "двойник" для времени отправления (time_out);
+'A' - если есть "двойник" для времени прибытия (time_in);
+'DA' - если есть "двойники" как для времени отправления, так и для времени прибытия рейса.
+
+WITH
+dsT AS
+(
+SELECT
+   trip_no, time_out,
+   IIF( CAST(FORMAT(time_out, 'hh') AS INT)%12 * 5 + 
+        FLOOR(CAST(FORMAT(time_out, 'mm') AS INT)/12.0) >=
+        CAST(FORMAT(time_out, 'mm') AS INT) % 5 * 12 AND
+        CAST(FORMAT(time_out, 'hh') AS INT) % 12 * 5 + 
+        FLOOR(CAST(FORMAT(time_out, 'mm') AS INT)/12.0) <
+        (CAST(FORMAT(time_out, 'mm') AS INT) % 5 +1) * 12,
+       IIF(NOT(CAST(FORMAT(time_out, 'mm') AS INT) % 5 = 
+       FLOOR(CAST(FORMAT(time_out, 'mm') AS INT) / 12.0) AND
+       FLOOR(CAST(FORMAT(time_out, 'mm') AS INT) /5.0) = 
+       CAST(FORMAT(time_out, 'hh') AS INT)%12),
+       2,
+       0),
+       0)+
+   
+    IIF( CAST(FORMAT(time_in, 'hh') AS INT)%12 * 5 + 
+        FLOOR(CAST(FORMAT(time_in, 'mm') AS INT)/12.0) >=
+        CAST(FORMAT(time_in, 'mm') AS INT) % 5 * 12 AND
+        CAST(FORMAT(time_in, 'hh') AS INT) % 12 * 5 + 
+        FLOOR(CAST(FORMAT(time_in, 'mm') AS INT)/12.0) <
+        (CAST(FORMAT(time_in, 'mm') AS INT) % 5 +1) * 12,
+       IIF(NOT(CAST(FORMAT(time_in, 'mm') AS INT) % 5 = 
+       FLOOR(CAST(FORMAT(time_in, 'mm') AS INT) / 12.0) AND
+       FLOOR(CAST(FORMAT(time_in, 'mm') AS INT) /5.0) = 
+       CAST(FORMAT(time_in, 'hh') AS INT)%12),
+       3,
+       0),
+       0) t
+FROM
+   Trip t1
+)
+SELECT 
+   trip_no,
+   CASE t
+   WHEN 2 THEN 'D'
+   WHEN 3 THEN 'A'
+   WHEN 5 THEN 'DA'
+   END  
+FROM 
+   dsT
+WHERE
+  t > 0
+
+
 ***/
