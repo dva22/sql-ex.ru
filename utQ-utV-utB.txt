@@ -1085,4 +1085,42 @@ FROM
 WHERE  
    id <> n - 1 and n <> -100
 
+Задание: 56 (Fiolent: 2004-06-22) 
 
+Для каждого белого квадрата вывести распределение окрашивавших его баллончиков по группам при следующих ограничениях:
+
+1. Группы для каждого квадрата нумеруются с 1.
+
+2. Сначала заполняется первая группа, куда включается только по одному баллончику каждого цвета с наименьшими (по данному цвету) номерами.
+
+3. Затем оставшиеся баллончики данного квадрата аналогично п.2 формируют вторую группу и т.д.
+
+Вывод: имя белого квадрата, номер группы, имя красного баллончика, имя зеленого баллончика, имя синего баллончика. Если баллончика какого-либо цвета в группе нет, то в соответствующем поле выводится NULL.
+
+WITH
+dsQ AS
+  (
+   SELECT DISTINCT
+      b_q_id,
+      SUM((b.b_vol)) OVER (PARTITION BY b.b_q_id) sum,
+      (IIF(v.v_color = 'R', v.v_name, NULL)) R,
+      (IIF(v.v_color = 'G', v.v_name, NULL)) G,
+      (IIF(v.v_color = 'B', v.v_name, NULL)) B,
+      RANK() OVER(PARTITION BY b.b_q_id, (v.v_color) ORDER BY b.b_v_id) rank
+   FROM
+      utB b
+      INNER JOIN utV v ON v.v_id = b.b_v_id
+  )
+SELECT
+  (SELECT q_name FROM utQ WHERE q_id = b_q_id),
+  rank,
+  MAX(R),
+  MAX(G),
+  MAX(B)
+FROM 
+  dsQ
+WHERE 
+  sum = 765
+GROUP BY 
+  b_q_id,
+  rank
