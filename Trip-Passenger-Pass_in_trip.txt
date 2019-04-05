@@ -1074,5 +1074,52 @@ FROM
 WHERE
   t > 0
 
+Задание: 58 (qwrqwr: 2013-03-01) 
+Беглый заключенный, оказавшись в аэропорту города town_from, улетел ближайшим рейсом. 
+Для каждого города town_from в Trip рассчитать вероятность того, что беглец окажется в городе town_to. Если в одно время из аэропорта вылетают несколько рейсов, считать возможность выбора заключенным каждого из этих рейсов равновероятной. 
+Вывод: town_from, town_to, вероятность в процентах (число с точностью до тысячных долей).
+WITH
+dsT1 AS
+(
+SELECT
+   t.town_from,
+   t.time_out,
+   IIF(LAG(time_out) OVER (PARTITION BY town_from ORDER BY time_out) IS NULL,
+      FIRST_VALUE(time_out) OVER (PARTITION BY town_from ORDER BY time_out DESC),
+       LAG(time_out) OVER (PARTITION BY town_from ORDER BY time_out)
+      ) time,
+  COUNT(time_out) c  
+FROM
+   Trip t
+GROUP BY 
+   t.town_from,
+   t.time_out
+),
+dsT2 AS
+(
+SELECT 
+  town_from,
+  time_out,
+  time,
+  DATEDIFF(minute, 
+           time, 
+           DATEADD(DAY, IIF(time_out <= time, 1, 0), time_out)
+          ) sum,
+   c
+FROM
+   dsT1
+)SELECT
+   t.town_from,
+   t.town_to,
+   CAST(SUM(CAST(t2.sum AS NUMERIC(7,3))/c)/1.0/
+        SUM(SUM(CAST(t2.sum AS NUMERIC(7,3))/c)) OVER (PARTITION BY t.town_from)/1.0*100
+    AS NUMERIC(7,3)
+       )
+FROM
+   Trip t
+  INNER JOIN dsT2 t2 ON t2.town_from = t.town_from AND t2.time_out = t.time_out
+GROUP BY 
+   t.town_from,
+   t.town_to
 
 ***/
