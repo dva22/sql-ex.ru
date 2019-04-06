@@ -212,39 +212,33 @@ V = at + b,
 Вывод: a с 8-ю знаками после десятичной точки; b - с 2-мя знаками после десятичной точки. 
 WITH
 dsD AS
-(SELECT B_DATETIME,
-    iif(DATEDIFF(second,(select min(B_DATETIME) from utB),B_DATETIME)>0,cast(DATEDIFF(second,(select min(B_DATETIME) from utB),B_DATETIME) as decimal(10,0))-81600,0) sec,
-    B_VOL vol
+(SELECT 
+   DATEDIFF(second,(select min(B_DATETIME) from utB),B_DATETIME)*1.0  sec,  
+    sum(B_VOL) vol
  FROM
-    utB
+    utB 
+group by B_DATETIME
 ),
 dsP AS
 (SELECT
-   SUM(sec * sec) stt,
-   SUM(vol * sec)  syt,
-   SUM(sec) st,
-   SUM(vol)  sy,
-   COUNT(*)  N
+   SUM(sec * sec*1.0) stt,
+   SUM(vol * sec*1.0)  syt,
+   SUM(sec*1.0) st,
+   SUM(vol*1.0)  sy,
+   COUNT(*)*1.0  N
  FROM
     dsD 
 ),
 d as
 (
-SELECT (syt * N -sy*st) a ,(N*stt -st*st) b,
- (stt*sy -syt*st) c,(N*stt -st*st) d
+SELECT (syt * N -sy*st) a ,(N*stt -st*st)/10000 b,
+ (stt*sy - syt*st) c
 FROM
     dsP
 )
-/*SELECT
-   cast(B_DATETIME as int)
- FROM
-    dsD*/
-
-
-select
-cast(cast(CONVERT(decimal(30,0), a)  /CONVERT(decimal(30,0),b) as decimal(26,8))as decimal(26,8)) ,
-cast(cast(CONVERT(decimal(25,0), c)  /CONVERT(decimal(19,0),b) as decimal(26,1))as decimal(26,2))  from d
-
+select 
+cast(cast( a  / b / 1.0 as decimal(26,4))/10000 as decimal(26,8)),
+cast( c  / b/10000 as decimal(26,2))  from d
 
 ***/
 
@@ -1124,3 +1118,44 @@ WHERE
 GROUP BY 
   b_q_id,
   rank
+
+Задание: 59 (VIG: 2003-12-22) 
+В течение 30 секунд, начиная от появления первого красного квадрата (R=255),
+получить текущее количество красных квадратов в каждую секунду данного периода времени (30
+точек). Вывод: дата-время, количество красных квадратов
+SELECT
+   DATEADD(SECOND,sec10.i*10 + sec.i, firstTime.i) Points,
+  (SELECT COUNT(b_q_id) from
+   (SELECT 
+        b.b_q_id
+    FROM
+       utB b
+       INNER JOIN utV v ON v.v_id = b.b_v_id
+    WHERE
+       b.b_datetime <= DATEADD(SECOND,sec10.i*10 + sec.i, firstTime.i)
+    GROUP BY 
+       b.b_q_id
+    HAVING
+       SUM(b.b_vol) = 255 AND
+       MAX(v.v_color) = MIN(v.v_color) AND
+       MAX(v.v_color) = 'R'
+   ) tmp
+  )
+FROM
+   (VALUES (0),(1),(2)) sec10(i),
+   (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) sec(i),
+   (SELECT TOP 1
+   b_datetime i
+FROM
+(
+    SELECT 
+       b.b_datetime,
+       SUM(b.b_vol) OVER(PARTITION BY b.b_q_id ORDER BY b.b_datetime) sum,
+       MAX(v.v_color) OVER(PARTITION BY b.b_q_id ORDER BY b.b_datetime) max,
+       MIN(v.v_color) OVER(PARTITION BY b.b_q_id ORDER BY b.b_datetime) min
+    FROM
+       utB b
+       INNER JOIN utV v ON v.v_id = b.b_v_id  
+) tmp
+WHERE sum = 255 and max = min and max = 'R'
+ORDER BY b_datetime) firstTime
