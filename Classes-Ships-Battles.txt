@@ -566,4 +566,48 @@ GROUP BY
 HAVING 
    COUNT(*) > 1
 
+«адание: 60 (Serge I: 2005-03-05) 
+ƒл€ каждого интервала времени между двум€ последовательными датами сражений, определить число рабочих дней (календарные дни, исключа€ субботу и воскресенье) в интервале с учетом границ. ѕредполагаетс€, что не существует двух сражений, произошедших в один день. 
+
+¬ывод: более раннее сражение, более позднее сражение, число рабочих дней между ними.
+SELECT
+   name,
+   nameN,  
+   DATEDIFF(day, 
+            DATEADD(DAY,8 - dateW,date), 
+            DATEADD(DAY,-dateNW+1,dateN)
+           )/7*5+
+   CASE dateW
+        WHEN 1 THEN 5
+        WHEN 2 THEN 4
+        WHEN 3 THEN 3
+        WHEN 4 THEN 2
+        WHEN 5 THEN 1
+        ELSE 0      
+   END+
+   CASE dateNW
+        WHEN 5 THEN 5
+        WHEN 4 THEN 4
+        WHEN 3 THEN 3
+        WHEN 2 THEN 2
+        WHEN 1 THEN 1
+        ELSE 5      
+   END
+FROM
+(
+SELECT
+   name,
+   date,
+   IIF(DATEPART(WEEKDAY,date)  = 1, 7, DATEPART(WEEKDAY,date)-1) dateW,
+   LEAD(name) OVER (ORDER BY date) nameN,
+   LEAD(date) OVER (ORDER BY date) dateN,
+   IIF(DATEPART(WEEKDAY,LEAD(date) OVER (ORDER BY date))  = 1, 7, 
+       DATEPART(WEEKDAY,LEAD(date) OVER (ORDER BY date))-1) dateNW 
+FROM
+   Battles
+) TMP
+WHERE 
+   dateN IS NOT NULL
+
+
 ***/
