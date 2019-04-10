@@ -1159,3 +1159,43 @@ FROM
 ) tmp
 WHERE sum = 255 and max = min and max = 'R'
 ORDER BY b_datetime) firstTime
+
+
+«адание: 61 (risp: 2009-12-26) 
+¬се имеющиес€ квадраты отсортированы по идентификаторам в пор€дке возрастани€ и представлены в виде шахматной доски.  вадраты выкладываютс€ построчно, начина€ с первого р€да:
+A1 -> B1 ... -> H1 -> A2 -> B2 ... -> H2 ... A8 -> B8 ... -> H8.
+ј1 - черна€ клетка.
+Ќайти:
+1. количество квадратов на своих местах (цвет клетки шахматной доски и квадрата совпадают);
+2. количество квадратов, которые должны быть черными, но таковыми не €вл€ютс€;
+3. количество белых клеток, дл€ которых не хватило квадратов;
+4. количество черных клеток, дл€ которых не хватило квадратов;
+5. количество краски, необходимое дл€ окраски существующих квадратов до необходимого белого цвета;
+6. координаты последнего квадрата на доске.
+
+WITH
+dsQ AS
+(
+SELECT top 64
+   q.q_id id,
+   COALESCE(SUM(b.b_vol), 0) vol,
+   IIF((ROW_NUMBER() OVER (ORDER BY q.q_id) +
+        (ROW_NUMBER() OVER (ORDER BY q.q_id)-1) / 8) % 2 = 0, 765, 0) color,
+   iif (COUNT(*) OVER () > 64, 64, COUNT(*) OVER ())count
+FROM
+   utQ q
+   LEFT JOIN utB b ON q.q_id = b.b_q_id
+GROUP BY 
+   q.q_id
+)
+SELECT 
+  SUM(IIF(vol = color, 1, 0)) ok,
+  SUM(IIF(vol > 0 and color = 0, 1, 0)) filed,
+  (64 - MAX(count))/2 + (64 - MAX(count)) % 2 white,
+  (64 - MAX(count))/2 black,
+  SUM(IIF(color = 765,color - vol,0)) v,
+  CONCAT(IIF(MAX(count) % 8 = 0,'H',CHAR(64 + MAX(count) % 8)),
+         FLOOR(MAX(count-1)/8)+1
+        ) place
+FROM
+  dsQ

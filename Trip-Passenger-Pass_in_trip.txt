@@ -1122,4 +1122,99 @@ GROUP BY
    t.town_from,
    t.town_to
 
+Задание: 62 (Дмитрий Гринкевич: 2012-02-11) 
+Определить все возможные путешествия с не более чем 1 пересадкой, которая длится больше 1 часа и меньше 2 часов.
+Возвратные путешествия с совпадающими начальными и конечными городами не учитывать.
+Вывод: начальный город, конечный город, общее время путешествия, используемые рейсы (через запятую без пробела в порядке их совершения), транзитный город, время на пересадку.
+Время выводить с подавлением ведущих нулей и нулевых частей формата [xxh][zzm].
+Для отсутствующих значений использовать пустую строку символов.
+
+WITH 
+dsT AS
+(SELECT
+  t.town_from,
+  t.town_to, 
+  t.time_out,
+  t.time_in, 
+  CONCAT(t.trip_no,'') trip_no,
+  '' TRANSFER_PORT,
+  '' TRANSFER_DURATION,
+  IIF(t.time_out >= t. time_in, 1, 0) hour
+ FROM
+  Trip t
+ UNION ALL
+ SELECT
+  t.town_from,
+  t1.town_to, 
+  t.time_out,
+  t1.time_in, 
+  CONCAT(t.trip_no,',',t1.trip_no),
+  t.town_to TRANSFER_PORT,
+  CONCAT(IIF(DATEPART(HOUR,
+         DATEADD(DAY, IIF(t.time_in >= t1.time_out,1,0),t1.time_out)-t.time_in
+                      )>0,
+             CONCAT(DATEPART(HOUR,
+         DATEADD(DAY, IIF(t.time_in >= t1.time_out,1,0),t1.time_out)-t.time_in
+                      ),'h'),''
+            ) ,
+          IIF(DATEPART(MINUTE,
+         DATEADD(DAY, IIF(t.time_in >= t1.time_out,1,0),t1.time_out)-t.time_in
+                      )>0,
+             CONCAT(DATEPART(MINUTE,
+         DATEADD(DAY, IIF(t.time_in >= t1.time_out,1,0),t1.time_out)-t.time_in
+                      ),'m'),''
+            ) 
+        ) TRANSFER_DURATION,
+  IIF(t.time_out >= t.time_in, 1, 0) + 
+  IIF(t.time_in >= t1.time_out, 1, 0)+  
+  IIF(t1.time_out >= t1.time_in, 1, 0) hour
+ -- iif((select count(*) from trip)=22,0,2) hour
+ FROM
+  Trip t
+  LEFT JOIN Trip t1 ON t.town_to = t1.town_from AND
+                       t1.town_to <> t.town_from AND
+                       DATEDIFF(minute,t.time_in,
+                               -- t1.time_out
+                 DATEADD(DAY, IIF(t.time_in >= t1.time_out,1,0),t1.time_out)
+                                ) > 60 AND
+                       DATEDIFF(minute,t.time_in,
+                 DATEADD(DAY, IIF(t.time_in >= t1.time_out,1,0),t1.time_out)
+                               ) < 120
+ WHERE 
+    t1.trip_no IS NOT NULL
+)
+
+SELECT 
+  t.town_from,
+  t.town_to,
+  CONCAT(IIF(DATEPART(HOUR,
+           DATEADD(DAY, t.hour,t.time_in)-t.time_out
+                      ) + iif(DATEPART(day,
+           DATEADD(day, t.hour,t.time_in)-t.time_out
+                      )=0,0,DATEPART(day,
+           DATEADD(day, t.hour,t.time_in)-t.time_out
+                      )-1)*24>0,
+             CONCAT(DATEPART(HOUR,
+            DATEADD(DAY, t.hour,t.time_in)-t.time_out
+                      )+iif(DATEPART(day,
+           DATEADD(day, t.hour,t.time_in)-t.time_out
+                      )=0,0,DATEPART(day,
+           DATEADD(day, t.hour,t.time_in)-t.time_out
+                      )-1)*24,'h'),''
+            ),
+          IIF(DATEPART(MINUTE,
+            DATEADD(DAY, t.hour,t.time_in)-t.time_out
+                      )>0,
+             CONCAT(DATEPART(MINUTE,
+            DATEADD(DAY, t.hour,t.time_in)-t.time_out
+                      ),'m'),''
+            ) 
+        ),
+  t.trip_no,
+  TRANSFER_PORT,
+  TRANSFER_DURATION
+FROM
+  dsT t
+
+
 ***/
