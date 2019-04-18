@@ -1216,5 +1216,26 @@ SELECT
 FROM
   dsT t
 
+Задание: 63 (VIG: 2003-06-05) 
+Найти рейс с минимальной длительностью полета для каждой авиакомпании, все типы самолетов которой используются хотя бы одной другой компанией. Вывести название компании, время искомого рейса в мин.
+
+SELECT DISTINCT 
+   (SELECT min(name) FROM Company WHERE ID_comp=t.ID_comp),
+   (SELECT min((DateDiff(mi, time_out, time_in+1))%1440) 
+   FROM trip WHERE ID_comp=t.ID_comp)
+   
+FROM
+   Trip t,
+   Trip t1
+WHERE
+   t.ID_comp <> t1.ID_comp AND
+   t.plane = t1.plane
+GROUP BY 
+   t.ID_comp, t1.ID_comp
+HAVING 
+ COUNT(DISTINCT t.plane) = 
+ (SELECT COUNT(DISTINCT tIn.plane) FROM Trip tIn WHERE tIn.ID_comp=t.ID_comp)
+
+
 
 ***/

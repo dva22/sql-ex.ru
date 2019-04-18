@@ -1199,3 +1199,45 @@ SELECT
         ) place
 FROM
   dsQ
+
+
+Задание: -4 (ZrenBy: 2003-09-01) 
+Найти квадраты, время между первой и последней окраской которых превышает среднее время по всем окрашенным квадратам.
+Вывести название квадрата и наибольшее время между двумя его последовательными окрасками в секундах.
+
+WITH 
+dsQ1 AS
+(
+SELECT 
+   b.b_q_id,
+   (DATEDIFF(SECOND, 
+                b.b_datetime, 
+                (SELECT TOP 1 b_datetime
+                 FROM utB
+                 WHERE b_q_id = b.b_q_id and b_datetime > b.b_datetime
+                 ORDER BY b_datetime)
+               )) diffMax
+FROM
+   utB b
+),
+
+dsQ AS
+(
+SELECT 
+   b.b_q_id id,
+   DATEDIFF(SECOND, MIN(b.b_datetime), MAX(b.b_datetime)) diff,
+   SUM(b.b_vol) vol
+FROM
+   utB b
+GROUP BY 
+   b.b_q_id
+)
+
+SELECT
+   (SELECT q_name FROM utQ WHERE Q_ID = id),
+   --diff,
+   (SELECT max(diffMax) FROM dsQ1 WHERE b_q_id = id)
+FROM
+   dsQ
+WHERE
+   diff > (SELECT avg(diff) FROM dsQ)

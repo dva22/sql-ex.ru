@@ -609,5 +609,34 @@ FROM
 WHERE 
    dateN IS NOT NULL
 
+«адание: -2 (Serge I: 2003-02-17) 
+ƒл€ каждой страны определить год, когда на воду было спущено максимальное количество ее кораблей. ¬ случае, если окажетс€ несколько таких лет, вз€ть минимальный из них. 
+¬ывод: страна, количество кораблей, год
+«амечание. ”читывать только корабли с известным годом спуска на воду.
+WITH 
+dsS AS
+(
+SELECT
+  c.country,
+  s.launched,
+  COUNT(s.launched) count
+FROM
+  Classes c
+  LEFT JOIN Ships s ON s.class = c.class and s.launched is not null
+GROUP BY 
+  c.country,
+  s.launched 
+)
+SELECT
+  s.country,  
+  IIF(MIN(s.launched) is null, NULL, MIN(s.count)),
+  MIN(s.launched)
+FROM
+  dsS s
+WHERE
+  s.count = (SELECT MAX(count) FROM dsS WHERE country = s.country)
+GROUP BY 
+  s.country
+
 
 ***/
