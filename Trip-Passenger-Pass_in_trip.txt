@@ -1236,6 +1236,47 @@ HAVING
  COUNT(DISTINCT t.plane) = 
  (SELECT COUNT(DISTINCT tIn.plane) FROM Trip tIn WHERE tIn.ID_comp=t.ID_comp)
 
+Задание: -6 (glassman: 2009-06-05) 
+Опираясь на утверждение, что одна секунда полета каждого пассажира приносит перевозчику 1 цент (0.01$) дохода, провести АВС-анализ привлекательности пассажиров вне зависимости от перевозчика.
+В основе метода лежит принцип Парето - 20% всех товаров дают 80% оборота. При выполнении анализа пассажиры делятся на 3 категории по степени их ценности: А, В и С.
+Порядок проведения анализа:
+1. Рассчитываем долю дохода пассажира от общей суммы дохода, приносимой всеми пассажирами, с накопительным итогом. Доля с накопительным итогом высчитывается путём прибавления доли конкретного пассажира к сумме долей пассажиров с не меньшей долей дохода (при одинаковой доле дохода меньший накопительный итог будет у пассажира, имя которого идет раньше в алфавитном порядке).
+2. Выделяем категории А,В и С. Категория А - округленная до двух десятичных знаков накопительная доля с 0,00% по 80,00% включительно, категория В - с 80,01% до 95,00%, категория С - с 95,01% до 100%.
+Вывод: имя пассажира, сумма прибыли в долларах, доля с накопительным итогом в процентах (точность - 2 знака после запятой), категория (А, В или С - буквы латинские)
 
+WITH 
+dsP as
+(
+SELECT 
+   (SELECT max(name) FROM Passenger WHERE id_psg = pt.ID_psg) name,
+   pt.ID_psg id, 
+   sum(DATEDIFF(second,
+                time_out,
+                DATEADD(DAY,IIF(time_in<time_out,1,0),time_in)
+               )
+      ) dur,
+  SUM(sum(DATEDIFF(second,
+                time_out,
+                DATEADD(DAY,IIF(time_in<time_out,1,0),time_in)
+               )
+      )) OVER() sum
+FROM 
+   Pass_in_trip pt, Trip t
+WHERE 
+   t.trip_no = pt.trip_no 
+GROUP BY 
+   pt.Id_psg
+)
+SELECT
+  name,
+  FORMAT(dur/100.0, '0.00'),  
+  concat( cast(sum(1.0*dur / sum * 100.0) OVER (ORDER BY dur  DESC,name, id) as decimal(12,2)),'%'),
+  CASE 
+  WHEN cast(sum(1.0*dur / sum * 100.0) OVER (ORDER BY dur  DESC,name, id) as decimal(12,2)) <= 80 THEN 'A' 
+  WHEN cast(sum(1.0*dur / sum * 100.0) OVER (ORDER BY dur  DESC,name, id) as decimal(12,2)) > 95 THEN 'C'
+  ELSE 'B' 
+  END
+FROM
+  dsP
 
 ***/
