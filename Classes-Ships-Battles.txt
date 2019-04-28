@@ -688,6 +688,20 @@ SELECT
 FROM 
    dsG
 
-
+Задание: -9 (Serge I: 2007-09-07) 
+В таблице Outcomes один и тот же корабль может встречаться неоднократно (принимал участие в нескольких сражениях).
+Требуется найти корабли, имена которых различаются только регистром букв, например, "Duke of York" и "duke Of york".
+Вывод: имя корабля (любой из вариантов), число различных вариантов написания имени данного корабля в таблице.
+SELECT
+   o1.ship,
+   COUNT(distinct CONVERT(varbinary(100), o1.ship))
+FROM
+   Outcomes o1,
+   Outcomes o2
+WHERE
+   CONVERT(varbinary(100), o1.ship) <> CONVERT(varbinary(100), o2.ship) AND
+   o1.ship = o2.ship
+GROUP BY 
+   o1.ship
 
 ***/
