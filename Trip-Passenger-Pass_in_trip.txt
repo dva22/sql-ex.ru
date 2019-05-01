@@ -1279,4 +1279,60 @@ SELECT
 FROM
   dsP
 
+Задание: -10 (GriGrim: 2013-08-23) 
+Отобразить карту полётов на статических картах Google.
+На карте вывести только уникальные направления полётов таким образом, что название первого города раньше по алфавиту, чем название второго города.
+Например, если есть рейс из Рима в Берлин, но нет из Берлина в Рим, то вывести направление Берлин-Рим. Или если есть оба рейса, из Милана в Мадрид и из Мадрида в Милан, то вывести только направление Мадрид-Милан.
+Полученные направления вывести в алфавитном порядке их городов.
+Для каждого города вывести метки с первой буквой его названия.
+В итоге должна получиться строка следующего вида (без переводов строк):
+<img src="http://maps.googleapis.com/maps/api/staticmap
+?path=weight:3|Aaa|Bbb
+&path=weight:3|Aaa|Ccc
+&path=weight:3|Bbb|Ccc
+&markers=label:A|Aaa
+&markers=label:B|Bbb
+&markers=label:C|Ccc
+&size=512x512&sensor=false">
+
+где
+<img src="http://maps.googleapis.com/maps/api/staticmap - это указание использовать статические карты Google;
+?path=weight:3|Aaa|Bbb - первое направление, из пункта Aaa в Bbb, с толщиной линии 3;
+&path=weight:3|... - все следующие направления;
+&markers=label:A|Aaa - метка (A) города Aaa;
+&size=512x512 - указание размера карты 512x512;
+&sensor=false"> - обязательный параметр.
+
+WITH
+dsT AS
+(
+SELECT DISTINCT
+  1 sort,
+  'path=weight:3|'+
+  TRIM(IIF(town_to < town_from, town_to, town_from))+'|'+
+  TRIM(IIF(town_to < town_from, town_from, town_to)) town
+FROM
+  Trip t
+UNION ALL
+SELECT DISTINCT
+  2,
+  'markers=label:'+LEFT(town_to,1)+'|' + 
+  TRIM(town_to)
+FROM
+  Trip t
+UNION
+SELECT DISTINCT
+  2,
+  'markers=label:'+LEFT(town_from,1)+'|' + 
+  TRIM(town_from)
+FROM
+  Trip t
+)
+SELECT
+  '<img src="http://maps.googleapis.com/maps/api/staticmap?' +
+  STRING_AGG(town, '&') WITHIN GROUP (ORDER BY sort, town) +
+  '&size=512x512&sensor=false">'
+FROM
+  dsT
+
 ***/
