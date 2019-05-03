@@ -704,4 +704,13 @@ WHERE
 GROUP BY 
    o1.ship
 
+Задание: -11 (GriGrim: 2013-08-23) 
+Для каждого корабля из таблицы Ships вывести его название в base64 (wikipedia).
+Вывод: name, base64name.
+select name, cast(N'' as xml).value('xs:base64Binary(sql:column("plain_text"))', 'varchar(max)') as [encoded_value]
+from (
+	select name, cast(name as varbinary(max)) as plain_text
+	from ships
+) as tmp
+
 ***/
