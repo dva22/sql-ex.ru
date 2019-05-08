@@ -1350,4 +1350,38 @@ SELECT
 FROM
   Trip t
 
+Задание: -13 (mslava: 2003-09-01) 
+Определить количество перевезенных пассажиров за каждый календарный день (по дате вылета) первого полугодия 2003 года, начиная от даты первого рейса и заканчивая датой последнего рейса в этом полугодии. Полугодием считать интервал с (01.01.03 по 30.06.03). Вывести дату, количество пассажиров. 
+SELECT
+  DATEADD(DAY, tmp3.i*100 + tmp2.i * 10 + tmp1.i,'2003-01-01'),
+  (SELECT COUNT(ID_psg)
+  FROM
+   pass_in_trip
+  WHERE
+  date = 
+    DATEADD(DAY, tmp3.i*100 + tmp2.i * 10 + tmp1.i,'2003-01-01'))
+FROM
+ (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) tmp1(i),
+ (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) tmp2(i),
+ (VALUES (0),(1)) tmp3(i)
+WHERE 
+ DATEADD(DAY, tmp3.i*100 + tmp2.i * 10 + tmp1.i,'2003-01-01') >=
+ (SELECT
+   MIN(date)
+ FROM
+   Pass_in_trip
+ WHERE
+   date BETWEEN '2003-01-01' AND '2003-06-30'
+ )
+AND
+ DATEADD(DAY, tmp3.i*100 + tmp2.i * 10 + tmp1.i,'2003-01-01') <=
+ (SELECT
+   MAX(date)
+ FROM
+   Pass_in_trip
+ WHERE
+   date BETWEEN '2003-01-01' AND '2003-06-30'
+ )
+
+
 ***/
