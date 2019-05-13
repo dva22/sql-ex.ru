@@ -73,3 +73,49 @@ FROM
    dsP1
 WHERE
    min = date
+
+N 
+«адание: -16 (Serge I: 2012-01-19) 
+Ќайти такие пункты приема, которые имеют в таблице Outcome записи на каждый рабочий день в течение некоторой недели (календарные дни, исключа€ субботу и воскресенье).
+¬ывод: номер пункта, дата понедельника полной рабочей недели в формате "YYYY-MM-DD", суммарное значение out за эту рабочую неделю.
+SELECT
+  o.point,
+  FORMAT(o.date, 'yyyy-MM-dd'),
+  (
+   SELECT
+     SUM(out)
+   FROM
+     Outcome
+   WHERE 
+     point = o.point AND
+     date <= DATEADD(DAY, 4, o.date) AND
+     date >= o.date
+  )  
+FROM 
+  Outcome o
+WHERE
+  DATEPART(weekday, o.date) = 2 AND
+  EXISTS (
+SELECT *
+FROM
+  Outcome
+WHERE
+  point = o.point AND
+  date = DATEADD(DAY, 1, o.date)
+         ) AND
+  EXISTS (
+   SELECT
+     *
+   FROM
+     Outcome
+   WHERE 
+     point = o.point AND
+     date <= DATEADD(DAY, 4, o.date) AND
+     date >= o.date
+  HAVING COUNT(DISTINCT date) >= 5
+) 
+GROUP BY 
+  o.point,
+  o.date,
+  FORMAT(o.date, 'yyyy-MM-dd')
+
