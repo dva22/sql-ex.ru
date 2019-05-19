@@ -1,0 +1,36 @@
+Задание: 22 (Serge I: 2004-09-09)
+Для каждого корабля с неизвестным годом спуска на воду записать в поле launched округленный до целого числа средний год спуска на воду кораблей этого класса. Если этот средний по классу год неизвестен, записать округленный до целого числа средний год спуска на воду кораблей страны данного корабля.
+WITH
+LaunchedShip AS
+(
+   SELECT
+     s.name,
+     s.launched,
+     (SELECT ROUND(AVG(sIN.launched * 1.0), 0)
+      FROM 
+        Ships sIN
+      WHERE 
+        sIN.class = s.class
+      ) launchedClass,
+     (SELECT ROUND(AVG(sIN.launched * 1.0), 0)
+      FROM 
+        Classes cIN
+        INNER JOIN Ships sIN ON sIN.class = cIN.class
+      WHERE 
+        cIN.country = (SELECT 
+                         max(cIN1.country) 
+                       FROM 
+                         Classes cIN1
+                       JOIN Ships sIN1 
+                       ON sIN1.class = cIN1.class
+                       WHERE sIN1.name = s.name
+                       ) 
+      ) launchedCountry
+   FROM
+     Ships s
+)
+UPDATE LaunchedShip
+SET 
+  launched = COALESCE(launchedClass, launchedCountry)
+WHERE
+  launched is null
