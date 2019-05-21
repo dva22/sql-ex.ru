@@ -34,3 +34,59 @@ SET
   launched = COALESCE(launchedClass, launchedCountry)
 WHERE
   launched is null
+
+«адание: 23 (anddros: 2010-09-24)
+Ѕританские ученые вывели формулу оптимального соотношени€ огневой мощи корабл€ и его водоизмещени€. ќна такова: (¬одоизмещение) = („исло орудий) * (( алибр) в кубе).
+ƒл€ каждого класса измените число орудий и/или калибр таким образом, чтобы абсолютное значение разницы между текущим водоизмещением и "оптимальным" было минимальным. 
+ћен€ть можно только на 1 или 2 целых единицы каждый из показателей в любую сторону или не мен€ть вовсе.
+¬ случае нескольких равноценных вариантов изменени€, дл€ выбора лучшего руководствоватьс€ последовательно критери€ми:
+- минимальное изменение калибра
+- минимальное изменение числа орудий
+- максимальное число орудий
+WITH
+Rows AS
+(SELECT
+   i
+ FROM
+   (VALUES (-2),(-1),(0),(1),(2)) Tmp(i)
+),
+Val AS
+(
+SELECT
+  c.class classIn,
+  ABS(c.displacement -
+      (c.numGuns + rNum.i) * POWER(c.bore + rBore.i, 3)
+     ) diff,
+  rNum.i num,
+  rBore.i bore
+FROM
+  Classes c, 
+  Rows rNum,
+  Rows rBore
+)
+UPDATE 
+  Classes 
+SET
+  bore =  bore +
+  (SELECT TOP 1
+     bore
+   FROM
+     Val
+   WHERE
+     class = classIn 
+   ORDER BY
+     diff, ABS(bore), ABS(num), num DESC
+  ),
+  numGuns =  numGuns +
+  (SELECT TOP 1
+     num
+   FROM
+     Val
+   WHERE
+     class = classIn 
+   ORDER BY
+     diff, ABS(bore), ABS(num), num DESC
+  )
+WHERE
+  bore IS NOT NULL AND
+  numGuns IS NOT NULL
