@@ -90,3 +90,47 @@ SET
 WHERE
   bore IS NOT NULL AND
   numGuns IS NOT NULL
+
+«адание: 24 (Shurgenz: 2005-01-02)
+ƒобавить отсутствующие в таблице Ships головные корабли из Outcomes. √одом спуска на воду считать средний округленный до целого числа год по корабл€м страны добавл€емого корабл€. ≈сли средний год неизвестен, запись не вносить.
+WITH
+ClassIns AS
+(
+SELECT
+  c.class,
+  (
+   SELECT 
+     ROUND(AVG(sIN.launched * 1.0),0)
+   FROM
+     Classes cIN
+     INNER JOIN Ships sIN ON sIN.class = cIN.class
+   WHERE 
+     cIN.country = MAX(c.country)
+   ) year
+FROM
+  Classes c
+WHERE   
+  c.class NOT IN (
+              SELECT
+                name
+              FROM
+                Ships
+              ) AND
+  c.class IN (
+              SELECT
+                ship
+              FROM
+                Outcomes
+              )
+GROUP BY
+  c.class
+)
+INSERT INTO Ships (name, class, launched)
+
+SELECT 
+  class,
+  class,
+  year
+FROM
+  ClassIns
+WHERE year IS NOT NULL
