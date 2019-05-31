@@ -1419,4 +1419,52 @@ SELECT
 FROM
   Num
 
+Задание: 64 (qwrqwr: 2010-05-13) 
+Имя пассажира состоит не более, чем из четырех слов, разделенных между собой разделителями.
+Каждое слово в имени содержит только латинские буквы. Разделителем слов кроме пробелов могут быть еще точка и/или дефис.
+Вывести: список слов длиной не менее трех символов, каждое из которых представляет собой упорядоченную либо по убыванию, либо по возрастанию последовательность латинских букв (т.е. ABCD или DCBA или ABBB, но не ABDC).
+Замечания: Между двумя словами не может быть одновременно более одной точки и одного дефиса. Регистр букв не 
+SELECT
+  DISTINCT
+  value 
+FROM
+(
+SELECT 
+   a3.value,
+   (SELECT --сортируем и соединяем буквы в слова 
+       STRING_AGG(tmpStr,'') 
+    FROM
+       (SELECT top 20 --разбиваем слова на буквы 
+           SUBSTRING(REPLACE(a3.value,' ',''),X.value,1) tmpStr
+        FROM 
+           (values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),
+                   (11),(12),(13),(14),(15),(16),(17),(18),(19),(20)
+           ) X(value)
+        ORDER BY tmpStr 
+        ) tmpStr
+   ) sortValue,
+   (SELECT --сортируем и соединяем буквы в слова 
+       STRING_AGG(tmpStr,'') 
+    FROM
+       (SELECT top 20 --разбиваем слова на буквы 
+           SUBSTRING(REPLACE(a3.value,' ',''),X.value,1) tmpStr
+        FROM 
+           (values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),
+                   (11),(12),(13),(14),(15),(16),(17),(18),(19),(20)
+           ) X(value)
+        ORDER BY tmpStr DESC 
+        ) tmpStr
+   ) sortValueDESC
+FROM 
+  Passenger
+  CROSS APPLY STRING_SPLIT(TRIM(name), ' ') a1
+  CROSS APPLY STRING_SPLIT(a1.value, '.') a2
+  CROSS APPLY STRING_SPLIT(a2.value, '-') a3
+WHERE
+  LEN(a3.value) >= 3
+) TMP
+WHERE
+  value = sortValueDESC OR 
+  value = sortValue
+
 ***/

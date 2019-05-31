@@ -134,3 +134,119 @@ SELECT
 FROM
   ClassIns
 WHERE year IS NOT NULL
+
+Задание: 25 (qwrqwr: 2014-10-03)
+Обновить таблицу Outcomes новыми результатами сражений: {sunk, damaged, ok}.
+Пусть каждая битва в Outcomes происходит так: все участвующие в ней корабли выстраиваются в порядке возрастания названия по кругу, на равном расстоянии друг от друга.
+Корабли делают одновременный залп из всех своих орудий в количестве numGuns. Корабли с неизвестным numGuns участвуют в построении, но не стреляют.
+Первое орудие каждого корабля направлено к центру круга, остальные орудия развернуты друг от друга на одинаковый угол, например: при numGuns=4 выстрелы будут произведены под углами в 0, 90, 180 и 270 градусов к направлению в центр. 
+После залпа любой снаряд, попавший в корабль с погрешностью менее, чем 0.5 градуса от направления выстрела, топит корабль (sunk); если снаряд отклоняется от корабля в пределах [0.5, 1.5) градуса - корабль повреждён (damaged); три или более повреждающих снаряда, вместе попав в один корабль, топят его (sunk); иначе корабль остаётся невредимым (ok).
+Замечания: 1) Имеющиеся результаты в Outcomes не учитывать, все корабли перед каждым сражением на плаву. 2) Линейные размеры кораблей не рассматривать, возможностью столкновения разных снарядов в воздухе пренебречь.
+WITH
+NumG AS
+--(
+--select '1Kirishima' name, 8 n
+--)
+(SELECT
+   class name,
+    COALESCE(numGuns,0) n
+ FROM
+   Classes
+ UNION
+ SELECT
+    name,
+    COALESCE(c.numGuns,0)
+ FROM
+  Classes c,
+  Ships s
+ WHERE 
+  (c.class = s.class) 
+),
+Ship AS
+(SELECT
+   o.battle,
+   o.ship,    
+   SUM(1.0*360/(SELECT COUNT(ship) FROM Outcomes  WHERE battle = o.battle)) OVER (PARTITION BY o.battle ORDER BY o.ship)-1.0*360/(SELECT COUNT(ship) FROM Outcomes WHERE battle = o.battle) point,
+   (SELECT
+    COALESCE(MAX(g.n),0)
+    FROM
+      NumG g
+    WHERE 
+      o.ship = g.name
+) guns,
+ ROW_NUMBER() OVER (PARTITION BY o.battle ORDER BY ship) num,
+  (SELECT COUNT(ship) FROM Outcomes WHERE battle = o.battle) count
+ FROM
+   (select ship, battle, result from Outcomes o
+   /* where battle = 'Guadalcanal' or battle = 'North Atlantic' and
+    ship <> 'Hood' and ship <> 'Bismarck'
+    union all select '1Kirishima', 'Guadalcanal', 'ok'  
+    union all select '1Kirishima', 'North Atlantic', 'ok'*/
+) o 
+),
+Ints AS
+(
+SELECT
+  i3.i * 100 + i2.i * 10 + i1.i i
+FROM
+  (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) i1(i),
+  (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) i2(i),
+  (VALUES (0),(1),(2)) i3(i)
+WHERE i3.i * 100 + i2.i * 10 + i1.i BETWEEN 1 AND 255
+),
+Guns AS
+(SELECT 
+   Ints.i, guns guns1, battle,
+   ship,
+   iif(SUM(1.0*360/guns) OVER (PARTITION BY ship, battle ORDER BY Ints.i)-1.0*360/guns<90,
+      ((SUM(1.0*360/guns) OVER (PARTITION BY ship, battle ORDER BY Ints.i)-1.0*360/guns)*2+180+1.0*360/count * num-1.0*360/count)%360,
+     iif(SUM(1.0*360/guns) OVER (PARTITION BY ship, battle ORDER BY Ints.i)-1.0*360/guns>270,
+      ((SUM(1.0*360/guns) OVER (PARTITION BY ship, battle ORDER BY Ints.i)-1.0*360/guns)*2-180+1.0*360/count * num-1.0*360/count)%360,
+      -100
+      )
+      ) guns,
+    1.0*360/count * num-1.0*360/count b,count , num
+ FROM
+   Ship,
+   Ints
+  WHERE Ints.i <= guns and guns>0
+)
+,
+bat AS
+(
+select
+  Ship name, battle b,
+  ((
+   SELECT
+     coalesce(SUM(1),0)
+   FROM
+     Guns
+   WHERE
+     (Ship.point > 0- 3 + Guns.guns and 
+      Ship.point < 0+ 3 + Guns.guns
+     or
+      360 - Guns.guns +  Ship.point <  3
+   )   and ship.battle = guns.battle and guns.ship <> ship.ship
+ )+
+(
+   SELECT
+     coalesce(SUM(3),0)
+   FROM
+     Guns
+   WHERE
+     (Ship.point > 0- 1 + Guns.guns and 
+      Ship.point < 0+ 1 + Guns.guns
+     or     
+     360 - Guns.guns +  Ship.point <  1  
+   )  and ship.battle = guns.battle and guns.ship <> ship.ship
+ )) s
+from
+  Ship
+) 
+update Outcomes 
+set result =
+iif((select sum(s) from bat where ship = name) >= 3, 'sunk',
+    iif((select sum(s) from bat where ship = name) >= 1, 
+        'damaged', 'ok'
+       )
+   )
