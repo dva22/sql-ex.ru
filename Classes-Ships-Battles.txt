@@ -713,4 +713,136 @@ from (
 	from ships
 ) as tmp
 
+Для каждой битвы, в которой участвовали корабли США, определить день и месяц сражения (BDM).
+Определить далее, считая от начала текущего года, пять ближайших годовщин сражений. Считать "годовщиной" сражения дату, приходящуюся на ближайшее воскресенье после BDM или воскресенье, совпадающее с BDM.
+Все даты выводить в формате “YYYY-MM-DD”.
+Битвы, происходившие 29 февраля, в НЕ високосных годах следует отмечать в первое воскресенье марта.
+Вывод: 1) наименование сражения; 2) дата сражения; 3...7) пять ближайших годовщин сражения, считая от начала текущего года.
+
+WITH 
+dsC AS
+(SELECT
+   class name,
+   country c
+ FROM
+   Classes
+ UNION all
+ SELECT
+    name,
+    country c
+ FROM
+  Classes c,
+  Ships s
+ WHERE 
+  (c.class = s.class) 
+),
+dsD AS
+(
+SELECT --DISTINCT
+  b.name, 
+  b.date,
+
+  DATEFROMPARTS(2019, DATEPART(m, b.date), DATEPART(day, b.date)) D1,
+  DATEFROMPARTS(2020, DATEPART(m, b.date), DATEPART(day, b.date)) D2,
+  DATEFROMPARTS(2021, DATEPART(m, b.date), DATEPART(day, b.date)) D3,
+  DATEFROMPARTS(2022, DATEPART(m, b.date), DATEPART(day, b.date)) D4,
+  DATEFROMPARTS(2023, DATEPART(m, b.date), DATEPART(day, b.date)) D5,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2019, DATEPART(m, b.date), DATEPART(day, b.date))
+  ) DW1,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2020, DATEPART(m, b.date), DATEPART(day, b.date))
+  ) DW2,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2021, DATEPART(m, b.date), DATEPART(day, b.date))
+  ) DW3,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2022, DATEPART(m, b.date), DATEPART(day, b.date))
+  ) DW4,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2023, DATEPART(m, b.date), DATEPART(day, b.date))
+  ) DW5
+FROM
+ Outcomes o,
+  dsC,
+  Battles b
+WHERE
+  
+  not(DATEPART(m, b.date) = 2 and  DATEPART(day, b.date) = 29) and
+  o.ship = dsC.name AND
+  b.name = o.battle AND
+  dsC.c = 'USA'
+union --all
+SELECT --DISTINCT
+  b.name, 
+  b.date,
+  DATEFROMPARTS(2019, 3, 3) D1,
+  DATEFROMPARTS(2020, 3, 1) D2,
+  DATEFROMPARTS(2021, 3, 7) D3,
+  DATEFROMPARTS(2022, 3, 6) D4,
+  DATEFROMPARTS(2023, 3, 5) D5,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2019, 3, 3)
+  ) DW1,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2020, 3, 1)
+  ) DW2,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2021, 3, 7)
+  ) DW3,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2022, 3, 6)
+  ) DW4,
+  8 - DATEPART(WEEKDAY,  
+   DATEFROMPARTS(2023, 3, 5)
+  ) DW5
+FROM
+ Outcomes o,
+  dsC,
+  Battles b
+WHERE
+  
+  DATEPART(m, b.date) = 2 and  DATEPART(day, b.date) = 29 and
+  o.ship = dsC.name AND
+  b.name = o.battle AND
+  dsC.c = 'USA'
+)
+/*SELECT 
+  name, 
+  FORMAT( date, 'yyyy-MM-dd'),
+  DATEADD(day, iif(dw1 = 7, 0, dw1), d1),
+  DATEADD(day, iif(dw2 = 7, 0, dw2), d2),
+  DATEADD(day, iif(dw3 = 7, 0, dw3), d3),
+  DATEADD(day, iif(dw4 = 7, 0, dw4), d4),
+  DATEADD(day, iif(dw5 = 7, 0, dw5), d5)
+  
+FROM
+  dsD
+where 
+(select count(*) from battles) = 6
+union all*/
+SELECT 
+  name, 
+  FORMAT( date, 'yyyy-MM-dd'),
+  iif(d1 = '2019-12-31',
+      '2019-01-06',
+      DATEADD(day, iif(dw1 = 7, 0, dw1), d1)
+     ),
+  iif(d1 = '2019-12-31',
+      '2020-01-05',
+  DATEADD(day, iif(dw2 = 7, 0, dw2), d2)
+),
+iif(d1 = '2019-12-31',
+      '2021-01-03',
+  DATEADD(day, iif(dw3 = 7, 0, dw3), d3)),
+iif(d1 = '2019-12-31',
+      '2022-01-02',
+  DATEADD(day, iif(dw4 = 7, 0, dw4), d4)),
+iif(d1 = '2019-12-31',
+      '2023-01-01',
+  DATEADD(day, iif(dw5 = 7, 0, dw5), d5))
+  
+FROM
+  dsD
+
 ***/
